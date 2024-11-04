@@ -6,6 +6,15 @@ __pycache__/
 # C extensions
 *.so
 
+# Archivos de migración
+*/migrations/*
+
+# Base de datos local
+*.sqlite3
+
+# Archivos subidos por usuarios
+media/
+
 # Distribution / packaging
 .Python
 build/
