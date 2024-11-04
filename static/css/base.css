@@ -1,0 +1,269 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100%;
+}
+
+.navbar {
+    background-color: #2373dc;
+    height: 80px;
+    margin: 20px;
+    border-radius: 16px;
+    padding: 8px;
+}
+
+.navbar-brand {
+    font-weight: 500;
+    color: #009970;
+    font-size: 24px;
+    transition: 0.3s color;
+}
+
+.login-button {
+    background-color: #009970;
+    color: #fff;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s background-color;
+}
+
+.login-button:hover {
+    background-color: #00b383;
+}
+
+.navbar-toggler {
+    border: none;
+    font-size: 20px;
+}
+
+.navbar-toggler:focus,
+.btn-close:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.nav-link {
+    color: #666777;
+    font-weight: 500;
+    position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: #fff;
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+}
+
+.navbar-brand {
+    color: white !important;
+}
+
+@media (min-width: 991px) {
+    .nav-link::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background-color: #009970;
+        visibility: hidden;
+        transition: 0.3s ease-in-out;
+    }
+
+    .nav-link:hover::before,
+    .nav-link.active::before {
+        width: 100%;
+        visibility: visible;
+    }
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin-top: 110px;
+}
+
+footer {
+    background-color: rgb(24, 22, 22);
+    position: relative;
+    width: 100%;
+    min-height: 300px;
+}
+
+.container {
+    max-width: 1140px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    /* Añadido para permitir el ajuste */
+}
+
+.col {
+    min-width: 250px;
+    color: #f2f2f2;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 0 32px;
+}
+
+.col .logo {
+    width: 150px;
+    margin-bottom: 25px;
+}
+
+.col h3 {
+    color: #900;
+    margin-bottom: 20px;
+    position: relative;
+    cursor: pointer;
+}
+
+.col h3::after {
+    content: '';
+    height: 3px;
+    width: 0px;
+    background-color: #f2f2f2;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transition: 0.3s ease;
+}
+
+.col h3:hover::after {
+    width: 30px;
+}
+
+.col .social {
+    display: flex;
+    justify-content: center;
+}
+
+.col .social a i {
+    color: #900;
+    margin-top: 32px;
+    margin-right: 5px;
+    transition: 0.3s ease;
+}
+
+.col .social a i:hover {
+    transform: scale(1.5);
+    filter: grayscale(25);
+}
+
+.col .links a {
+    display: block;
+    text-decoration: none;
+    color: #f2f2f2;
+    margin-bottom: 5px;
+    position: relative;
+    transition: 0.3s ease;
+}
+
+.col .links a::before {
+    content: '';
+    height: 16px;
+    width: 3px;
+    position: absolute;
+    top: 5px;
+    left: -10px;
+    background-color: #900;
+    transition: 0.5 ease;
+    opacity: 0;
+}
+
+.col .links a:hover::before {
+    opacity: 1;
+}
+
+.col .links a:hover {
+    transform: translateX(-8px);
+    color: #900;
+}
+
+.col .contact-details {
+    display: inline-flex;
+    justify-content: space-between;
+}
+
+.col .contact-details i {
+    margin-right: 15px;
+}
+
+.row .form {
+    display: flex;
+    padding: 32px 0;
+}
+
+.row .form input {
+    background-color: #1a1c20ff;
+    border: 0;
+    outline: none;
+    padding: 14px 20px;
+    border-radius: 6px;
+    color: #f2f2f2;
+    flex-grow: 1;
+    max-width: 400px;
+}
+
+.form button {
+    padding: 14px 20px;
+    border: 0;
+    border-radius: 6px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: #900;
+}
+
+/* Responsivo */
+
+@media(max-width:900px) {
+    .row {
+        flex-direction: column;
+    }
+
+    .col {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 25px;
+    }
+
+    .col .social {
+        justify-content: flex-start;
+    }
+}
+
+@media(max-width:768px) {
+    .row {
+        flex-direction: column;
+    }
+
+    .col {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 15px;
+    }
+
+    .col .social {
+        justify-content: flex-start;
+    }
+}

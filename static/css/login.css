@@ -1,0 +1,79 @@
+.contenedor {
+    display: flex;
+    height: 100vh;
+}
+
+.login-section {
+    font-family: "Playwrite GB S", serif;
+    width: 25%;
+    padding: 20px;
+    margin-top: -80px;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo img {
+    width: 350px;
+    margin-bottom: 20px;
+    margin-top: -100px;
+}
+
+form {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #5c5cd6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4a4ab3;
+}
+
+.options {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+}
+
+.options a {
+    color: #5c5cd6;
+    text-decoration: none;
+}
+
+.options a:hover {
+    text-decoration: underline;
+}
