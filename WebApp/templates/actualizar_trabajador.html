@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Actualizar Trabajador{% endblock %}
+
+{% block content %}
+<div class="container mt-2">
+    <h2 class="text-center mb-4">Actualizar Información del Trabajador</h2>
+    <div class="card p-4">
+        <form method="POST">
+            {% csrf_token %}
+            <!-- Formulario de Actualización -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="first_name">Nombre:</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="last_name">Apellido:</label>
+                    {{ form.last_name }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="email">Correo Electrónico:</label>
+                    {{ form.email }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="sexo">Sexo:</label>
+                    {{ form.sexo }}
+                </div>
+            </div>
+            <!-- Botón de Guardar Cambios -->
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <a href="{% url 'trabajadores' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+
+        <!-- Botón de Eliminación de Cuenta -->
+        <div class="text-center mt-4">
+            <button class="btn btn-danger" onclick="confirmarEliminacion({{ trabajador.id }});">Eliminar mi cuenta</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmarEliminacion(trabajadorId) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirige a la URL de eliminación, reemplazando el ID
+                window.location.href = `{% url 'eliminar_trabajador' 0 %}`.replace('0', trabajadorId);
+            }
+        });
+    }
+</script>
+
+{% endblock %}
