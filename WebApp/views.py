@@ -52,10 +52,27 @@ def actualizar_trabajador(request):
         form = TrabajadorUpdateForm(instance=request.user)
     return render(request, 'actualizar.html', {'form': form})
 
+from django.db.models import Q
+
 @login_required
 def listar_trabajadores(request):
-    trabajadores = Trabajador.objects.all()  # Recupera todos los trabajadores de la base de datos
-    return render(request, 'trabajadores.html', {'trabajadores': trabajadores})
+    # Obtener valores de los filtros de búsqueda del request
+    sexo = request.GET.get('sexo')
+    cargo = request.GET.get('cargo')
+    area = request.GET.get('area')
+
+    # Filtrar trabajadores según los valores proporcionados en los filtros
+    trabajadores = Trabajador.objects.all()
+    
+    if sexo:
+        trabajadores = trabajadores.filter(sexo=sexo)
+    if cargo:
+        trabajadores = trabajadores.filter(cargo__icontains=cargo)
+    if area:
+        trabajadores = trabajadores.filter(area__icontains=area)
+
+    return render(request, 'trabajadores.html', {'trabajadores': trabajadores, 'sexo': sexo, 'cargo': cargo, 'area': area})
+
 
 @login_required
 def actualizar_trabajador(request, trabajador_id):
