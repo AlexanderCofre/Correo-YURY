@@ -6,6 +6,41 @@
 <div class="album py-2">
     <div class="container mt-5">
         <h2 class="text-center mb-4">Lista de Trabajadores</h2>
+
+        <!-- Formulario de Búsqueda -->
+        <form method="get" class="mb-4">
+            <h3 class="text-center mb-4">Filtros</h3>
+            <div class="row g-3">
+                <!-- Filtro por Sexo -->
+                <div class="col-md-3">
+                    <label for="sexo" class="form-label">Sexo</label>
+                    <select id="sexo" name="sexo" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="M" {% if sexo == "M" %}selected{% endif %}>Masculino</option>
+                        <option value="F" {% if sexo == "F" %}selected{% endif %}>Femenino</option>
+                    </select>
+                </div>
+
+                <!-- Filtro por Cargo -->
+                <div class="col-md-3">
+                    <label for="cargo" class="form-label">Cargo</label>
+                    <input type="text" id="cargo" name="cargo" class="form-control" value="{{ cargo }}" placeholder="Buscar por cargo">
+                </div>
+
+                <!-- Filtro por Área -->
+                <div class="col-md-3">
+                    <label for="area" class="form-label">Área</label>
+                    <input type="text" id="area" name="area" class="form-control" value="{{ area }}" placeholder="Buscar por área">
+                </div>
+
+                <!-- Botón de Búsqueda -->
+                <div class="">
+                    <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Lista de Trabajadores -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
             {% for trabajador in trabajadores %}
             <div class="col">
@@ -24,6 +59,7 @@
                         <p class="card-text"><strong>RUT:</strong> {{ trabajador.RUT }}</p>
                         <p class="card-text"><strong>Sexo:</strong> {{ trabajador.sexo }}</p>
                         <p class="card-text"><strong>Cargo:</strong> {{ trabajador.cargo }}</p>
+                        <p class="card-text"><strong>Área:</strong> {{ trabajador.area }}</p>
                         <div class="d-flex justify-content-center align-items-center">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-sm btn-outline-secondary">Ver</button>
@@ -37,5 +73,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
