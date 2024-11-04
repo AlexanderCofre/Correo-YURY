@@ -13,7 +13,7 @@ class Trabajador(AbstractUser):
     area = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"{self.nombre_completo} ({self.RUT})"
+        return f"{self.first_name}, {self.last_name} ({self.RUT})"
 
 # Modelo para los datos de contacto de emergencia
 class ContactoEmergencia(models.Model):
