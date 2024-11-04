@@ -29,7 +29,7 @@ class TrabajadorRegistroForm(UserCreationForm):
             trabajador.save()
         return trabajador
 
-    def clean_rut(self):
+    def clean_RUT(self):
         rut = self.cleaned_data.get('RUT')
         if not self.validar_rut(rut):
             raise forms.ValidationError('El RUT ingresado no es válido.')
@@ -50,10 +50,10 @@ class TrabajadorRegistroForm(UserCreationForm):
         # Calcular el dígito verificador
         suma = 0
         multiplicador = 2
-        
+
         for i in reversed(str(numero)):
             suma += int(i) * multiplicador
-            multiplicador = multiplicador + 1 if multiplicador < 7 else 2
+            multiplicador = 2 if multiplicador == 7 else multiplicador + 1
 
         digito_calculado = 11 - (suma % 11)
         if digito_calculado == 11:
@@ -65,6 +65,7 @@ class TrabajadorRegistroForm(UserCreationForm):
         
         # Comparar el dígito calculado con el dígito verificador
         return digito_calculado == digito_verificador
+
 
 class TrabajadorLoginForm(AuthenticationForm):
     username = forms.CharField(label="RUT o nombre de usuario")
