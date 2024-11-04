@@ -71,7 +71,15 @@ class TrabajadorLoginForm(AuthenticationForm):
     username = forms.CharField(label="RUT o nombre de usuario")
     password = forms.CharField(widget=forms.PasswordInput)
 
+
 class TrabajadorUpdateForm(forms.ModelForm):
     class Meta:
         model = Trabajador
-        fields = ['first_name', 'last_name', 'cargo', 'area']
+        fields = ['first_name', 'last_name', 'email', 'sexo']  # Campos editables por el usuario
+
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'sexo': forms.Select(attrs={'class': 'form-control'}),
+        }
