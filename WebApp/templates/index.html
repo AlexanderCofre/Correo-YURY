@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-center mt-2">
+    <h1>Bienvenido a Correo Yuri</h1>
+    <p>¡Tu espacio ideal para explorar y aprender! Aquí encontrarás todo lo necesario para potenciar tu conocimiento y habilidades.</p>
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">📚 Amplia Gama de Libros</h5>
+                    <p class="card-text">Accede a una extensa colección de libros y publicaciones especializadas para tu aprendizaje.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">💻 Recursos Digitales</h5>
+                    <p class="card-text">Disponibles las 24 horas, ideales para estudiar a tu ritmo y conveniencia.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">🧑‍🏫 Asesoramiento Personalizado</h5>
+                    <p class="card-text">Recibe apoyo en el aprendizaje de diversos temas por parte de nuestros expertos.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">📅 Talleres y Eventos</h5>
+                    <p class="card-text">Participa en talleres para mejorar tus habilidades y expandir tus conocimientos.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">🌐 Comunidad en Línea</h5>
+                    <p class="card-text">Conéctate y colabora con otros usuarios para enriquecer tu aprendizaje.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">🔔 Notificaciones Personalizadas</h5>
+                    <p class="card-text">Recibe actualizaciones sobre nuevos recursos y eventos directamente en tu correo.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta mt-1">
+        <h3>¡Únete a nosotros hoy!</h3>
+        <p>Inscríbete para acceder a contenido exclusivo y formar parte de nuestra comunidad de aprendizaje.</p>
+        <a href="{% url 'registro' %}" class="btn btn-primary">Registrarse</a>
+    </div>
+</div>
+{% endblock %}
