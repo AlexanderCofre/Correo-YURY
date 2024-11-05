@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorUpdateForm
+from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorUpdateForm, ContactoEmergenciaForm, CargaFamiliarForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.forms import formset_factory
 from .models import Trabajador, Cargo, Area, Departamento
 from django.http import JsonResponse
 
@@ -10,17 +11,45 @@ def inicio(request):
     return render(request, 'index.html')
 
 def registro_trabajador(request):
-    if request.method == "POST":
-        form = TrabajadorRegistroForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
+    ContactoEmergenciaFormSet = formset_factory(ContactoEmergenciaForm, extra=1)
+    CargaFamiliarFormSet = formset_factory(CargaFamiliarForm, extra=1)
+
+    if request.method == 'POST':
+        trabajador_form = TrabajadorRegistroForm(request.POST)
+        contacto_formset = ContactoEmergenciaFormSet(request.POST, prefix='contacto')
+        carga_formset = CargaFamiliarFormSet(request.POST, prefix='carga')
+
+        if trabajador_form.is_valid() and contacto_formset.is_valid() and carga_formset.is_valid():
+            trabajador = trabajador_form.save()
+            
+            # Guardar contactos de emergencia
+            for form in contacto_formset:
+                contacto = form.save(commit=False)
+                contacto.trabajador = trabajador
+                contacto.save()
+                
+            # Guardar cargas familiares
+            for form in carga_formset:
+                carga = form.save(commit=False)
+                carga.trabajador = trabajador
+                carga.save()
+                
+            messages.success(request, "Registro exitoso")
+            return redirect('nombre_de_la_pagina_principal')
         else:
-            # Agrega esta línea para ver errores en la consola
-            print(form.errors)
+            messages.error(request, "Por favor, corrija los errores en el formulario.")
+
     else:
-        form = TrabajadorRegistroForm()
-    return render(request, 'registro.html', {'form': form})
+        trabajador_form = TrabajadorRegistroForm()
+        contacto_formset = ContactoEmergenciaFormSet(prefix='contacto')
+        carga_formset = CargaFamiliarFormSet(prefix='carga')
+
+    context = {
+        'trabajador_form': trabajador_form,
+        'contacto_formset': contacto_formset,
+        'carga_formset': carga_formset
+    }
+    return render(request, 'registro.html', context)
 
 
 def login_trabajador(request):
