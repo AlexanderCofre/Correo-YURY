@@ -16,26 +16,54 @@
                     <label for="sexo" class="form-label">Sexo</label>
                     <select id="sexo" name="sexo" class="form-select">
                         <option value="">Todos</option>
-                        <option value="M" {% if sexo == "M" %}selected{% endif %}>Masculino</option>
-                        <option value="F" {% if sexo == "F" %}selected{% endif %}>Femenino</option>
+                        {% for code, name in sexos %}
+                            <option value="{{ code }}" {% if selected_sexo == code %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Filtro por Departamento -->
+                <div class="col-md-3">
+                    <label for="departamento" class="form-label">Departamento</label>
+                    <select id="departamento" name="departamento" class="form-select">
+                        <option value="">Todos</option>
+                        {% for departamento in departamentos %}
+                            <option value="{{ departamento.id }}" {% if selected_departamento == departamento.id|stringformat:"s" %}selected{% endif %}>
+                                {{ departamento.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Filtro por Área -->
+                <div class="col-md-3">
+                    <label for="area" class="form-label">Área</label>
+                    <select id="area" name="area" class="form-select">
+                        <option value="">Todos</option>
+                        {% for area in areas %}
+                            <option value="{{ area.id }}" {% if selected_area == area.id|stringformat:"s" %}selected{% endif %}>
+                                {{ area.nombre }}
+                            </option>
+                        {% endfor %}
                     </select>
                 </div>
 
                 <!-- Filtro por Cargo -->
                 <div class="col-md-3">
                     <label for="cargo" class="form-label">Cargo</label>
-                    <input type="text" id="cargo" name="cargo" class="form-control" value="{{ cargo }}" placeholder="Buscar por cargo">
-                </div>
-
-                <!-- Filtro por Área -->
-                <div class="col-md-3">
-                    <label for="area" class="form-label">Área</label>
-                    <input type="text" id="area" name="area" class="form-control" value="{{ area }}" placeholder="Buscar por área">
+                    <select id="cargo" name="cargo" class="form-select">
+                        <option value="">Todos</option>
+                        {% for cargo in cargos %}
+                            <option value="{{ cargo.id }}" {% if selected_cargo == cargo.id|stringformat:"s" %}selected{% endif %}>
+                                {{ cargo.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
                 </div>
 
                 <!-- Botón de Búsqueda -->
-                <div class="">
-                    <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                <div class="col-md-12 text-center mt-3">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
                 </div>
             </div>
         </form>
@@ -58,8 +86,12 @@
                         <h5 class="card-title">{{ trabajador.first_name }} {{ trabajador.last_name }}</h5>
                         <p class="card-text"><strong>RUT:</strong> {{ trabajador.RUT }}</p>
                         <p class="card-text"><strong>Sexo:</strong> {{ trabajador.sexo }}</p>
-                        <p class="card-text"><strong>Cargo:</strong> {{ trabajador.cargo }}</p>
-                        <p class="card-text"><strong>Área:</strong> {{ trabajador.area }}</p>
+                        <p class="card-text"><strong>Cargo:</strong></p>
+                        <p>{{ trabajador.cargo.nombre }}</p>
+                        <p class="card-text"><strong>Área:</strong></p>
+                        <p>{{ trabajador.area.nombre }}</p>
+                        <p class="card-text"><strong>Departamento:</strong></p>
+                        <p>{{ trabajador.area.departamento.nombre }}</p>
                         <div class="d-flex justify-content-center align-items-center">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-sm btn-outline-secondary">Ver</button>
