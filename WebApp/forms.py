@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Trabajador, Cargo, Area, Departamento
+from .models import Trabajador, Cargo, Area, Departamento, ContactoEmergencia, CargaFamiliar
+from django.core.exceptions import ValidationError
+import re
 
 class TrabajadorRegistroForm(UserCreationForm):
     RUT = forms.CharField(max_length=12)
@@ -128,3 +130,75 @@ class TrabajadorUpdateForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'sexo': forms.Select(attrs={'class': 'form-control'}),
         }
+
+# Función para validar teléfono chileno
+def validar_telefono_chileno(value):
+    if not re.match(r"^\+56\s?9?\d{8}$", value):
+        raise ValidationError("El teléfono debe ser un número chileno válido (+56 9XXXXXXXX).")
+
+# Formulario para ContactoEmergencia
+class ContactoEmergenciaForm(forms.ModelForm):
+    telefono_contacto = forms.CharField(
+        max_length=15,
+        validators=[validar_telefono_chileno],
+        label="Teléfono de Contacto"
+    )
+
+    class Meta:
+        model = ContactoEmergencia
+        fields = ['nombre_contacto', 'apellido_contacto', 'relacion', 'telefono_contacto']
+        labels = {
+            'nombre_contacto': 'Nombre del Contacto',
+            'apellido_contacto': 'Apellido del Contacto',
+            'relacion': 'Relación con el Trabajador'
+        }
+
+# Formulario para CargaFamiliar
+class CargaFamiliarForm(forms.ModelForm):
+    rut = forms.CharField(validators=[], label="RUT")
+
+    class Meta:
+        model = CargaFamiliar
+        fields = ['nombre_carga', 'parentesco', 'sexo', 'rut']
+        labels = {
+            'nombre_carga': 'Nombre de la Carga Familiar',
+            'parentesco': 'Parentesco',
+            'sexo': 'Sexo'
+        }
+
+    def clean_rut(self):
+        rut = self.cleaned_data.get('rut')
+        if not self.validar_rut(rut):
+            raise forms.ValidationError('El RUT ingresado no es válido.')
+        return rut
+
+    def validar_rut(self, rut):
+        # Eliminar espacios y guiones
+        rut = rut.replace(" ", "").replace("-", "")
+        
+        # Validar formato
+        if len(rut) < 2 or not rut[:-1].isdigit() or not (rut[-1].isdigit() or rut[-1].upper() == 'K'):
+            return False
+
+        # Separar el número y el dígito verificador
+        numero = int(rut[:-1])
+        digito_verificador = rut[-1].upper()
+        
+        # Calcular el dígito verificador
+        suma = 0
+        multiplicador = 2
+
+        for i in reversed(str(numero)):
+            suma += int(i) * multiplicador
+            multiplicador = 2 if multiplicador == 7 else multiplicador + 1
+
+        digito_calculado = 11 - (suma % 11)
+        if digito_calculado == 11:
+            digito_calculado = '0'
+        elif digito_calculado == 10:
+            digito_calculado = 'K'
+        else:
+            digito_calculado = str(digito_calculado)
+        
+        # Comparar el dígito calculado con el dígito verificador
+        return digito_calculado == digito_verificador
