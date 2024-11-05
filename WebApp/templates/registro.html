@@ -27,10 +27,10 @@
                     <!-- Campo de RUT -->
                     <div class="form-group mt-3">
                         <label for="id_RUT">RUT:</label>
-                        {{ form.RUT|add_class:"form-control" }}
-                        {% if form.RUT.errors %}
+                        {{ trabajador_form.RUT|add_class:"form-control" }}
+                        {% if trabajador_form.RUT.errors %}
                             <div class="alert alert-danger mt-1">
-                                {% for error in form.RUT.errors %}
+                                {% for error in trabajador_form.RUT.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -40,10 +40,10 @@
                     <!-- Campo de Nombre -->
                     <div class="form-group mt-3">
                         <label for="id_first_name">Nombre:</label>
-                        {{ form.first_name|add_class:"form-control" }}
-                        {% if form.first_name.errors %}
+                        {{ trabajador_form.first_name|add_class:"form-control" }}
+                        {% if trabajador_form.first_name.errors %}
                             <div class="alert alert-danger mt-1">
-                                {% for error in form.first_name.errors %}
+                                {% for error in trabajador_form.first_name.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -53,10 +53,10 @@
                     <!-- Campo de Apellido -->
                     <div class="form-group mt-3">
                         <label for="id_last_name">Apellido:</label>
-                        {{ form.last_name|add_class:"form-control" }}
-                        {% if form.last_name.errors %}
+                        {{ trabajador_form.last_name|add_class:"form-control" }}
+                        {% if trabajador_form.last_name.errors %}
                             <div class="alert alert-danger mt-1">
-                                {% for error in form.last_name.errors %}
+                                {% for error in trabajador_form.last_name.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -66,10 +66,10 @@
                     <!-- Campo de Sexo -->
                     <div class="form-group mt-3">
                         <label for="id_sexo">Sexo:</label>
-                        {{ form.sexo|add_class:"form-control" }}
-                        {% if form.sexo.errors %}
+                        {{ trabajador_form.sexo|add_class:"form-control" }}
+                        {% if trabajador_form.sexo.errors %}
                             <div class="alert alert-danger mt-1">
-                                {% for error in form.sexo.errors %}
+                                {% for error in trabajador_form.sexo.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -86,10 +86,10 @@
                     <!-- Campo de Fecha de Ingreso -->
                     <div class="form-group mt-3">
                         <label for="id_fecha_ingreso">Fecha de Ingreso:</label>
-                        {{ form.fecha_ingreso|add_class:"form-control" }}
-                        {% if form.fecha_ingreso.errors %}
+                        {{ trabajador_form.fecha_ingreso|add_class:"form-control" }}
+                        {% if trabajador_form.fecha_ingreso.errors %}
                             <div class="alert alert-danger mt-1">
-                                {% for error in form.fecha_ingreso.errors %}
+                                {% for error in trabajador_form.fecha_ingreso.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -99,10 +99,10 @@
                     <!-- Campo de Departamento -->
                     <div class="form-group mt-3">
                         <label for="id_departamento">Departamento:</label>
-                        {{ form.departamento|add_class:"form-control" }}
-                        {% if form.departamento.errors %}
+                        {{ trabajador_form.departamento|add_class:"form-control" }}
+                        {% if trabajador_form.departamento.errors %}
                             <div class="alert alert-danger mt-1">
-                                {% for error in form.departamento.errors %}
+                                {% for error in trabajador_form.departamento.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -112,10 +112,10 @@
                     <!-- Campo de Área -->
                     <div class="form-group mt-3">
                         <label for="id_area">Área:</label>
-                        {{ form.area|add_class:"form-control" }}
-                        {% if form.area.errors %}
+                        {{ trabajador_form.area|add_class:"form-control" }}
+                        {% if trabajador_form.area.errors %}
                             <div class="alert alert-danger mt-1">
-                                {% for error in form.area.errors %}
+                                {% for error in trabajador_form.area.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -125,10 +125,10 @@
                     <!-- Campo de Cargo -->
                     <div class="form-group mt-3">
                         <label for="id_cargo">Cargo:</label>
-                        {{ form.cargo|add_class:"form-control" }}
-                        {% if form.cargo.errors %}
+                        {{ trabajador_form.cargo|add_class:"form-control" }}
+                        {% if trabajador_form.cargo.errors %}
                             <div class="alert alert-danger mt-1">
-                                {% for error in form.cargo.errors %}
+                                {% for error in trabajador_form.cargo.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -145,10 +145,10 @@
                     <!-- Campo de Correo Electrónico -->
                     <div class="form-group mt-3">
                         <label for="id_email">Correo Electrónico:</label>
-                        {{ form.email|add_class:"form-control" }}
-                        {% if form.email.errors %}
+                        {{ trabajador_form.email|add_class:"form-control" }}
+                        {% if trabajador_form.email.errors %}
                             <div class="alert alert-danger mt-1">
-                                {% for error in form.email.errors %}
+                                {% for error in trabajador_form.email.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -158,10 +158,10 @@
                     <!-- Campo de Contraseña -->
                     <div class="form-group mt-3">
                         <label for="id_password1">Contraseña:</label>
-                        {{ form.password1|add_class:"form-control" }}
-                        {% if form.password1.errors %}
+                        {{ trabajador_form.password1|add_class:"form-control" }}
+                        {% if trabajador_form.password1.errors %}
                             <div class="alert alert-danger mt-1">
-                                {% for error in form.password1.errors %}
+                                {% for error in trabajador_form.password1.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -171,10 +171,10 @@
                     <!-- Campo de Confirmación de Contraseña -->
                     <div class="form-group mt-3">
                         <label for="id_password2">Confirmar Contraseña:</label>
-                        {{ form.password2|add_class:"form-control" }}
-                        {% if form.password2.errors %}
+                        {{ trabajador_form.password2|add_class:"form-control" }}
+                        {% if trabajador_form.password2.errors %}
                             <div class="alert alert-danger mt-1">
-                                {% for error in form.password2.errors %}
+                                {% for error in trabajador_form.password2.errors %}
                                     {{ error }}
                                 {% endfor %}
                             </div>
@@ -182,12 +182,91 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Nueva Carta: Información de Contacto de Emergencia -->
+            <div class="col-md-6">
+                <div class="card p-3 mb-4">
+                    <h5 class="card-title">Información de Contacto de Emergencia</h5>
+                    {% for form in contacto_formset %}
+                        <!-- Nombre de Contacto de Emergencia -->
+                        <div class="form-group mt-3">
+                            <label for="id_contacto_emergencia_nombre">Nombre del Contacto:</label>
+                            {{ form.nombre_contacto|add_class:"form-control" }}
+                            {% if form.nombre_contacto.errors %}
+                                <div class="alert alert-danger mt-1">
+                                    {% for error in form.nombre_contacto.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Teléfono de Contacto de Emergencia -->
+                        <div class="form-group mt-3">
+                            <label for="id_contacto_emergencia_telefono">Teléfono de Contacto:</label>
+                            {{ form.telefono_contacto|add_class:"form-control" }}
+                            {% if form.telefono_contacto.errors %}
+                                <div class="alert alert-danger mt-1">
+                                    {% for error in form.telefono_contacto.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Relación con el Contacto de Emergencia -->
+                        <div class="form-group mt-3">
+                            <label for="id_contacto_emergencia_relacion">Relación:</label>
+                            {{ form.relacion_contacto|add_class:"form-control" }}
+                            {% if form.relacion_contacto.errors %}
+                                <div class="alert alert-danger mt-1">
+                                    {% for error in form.relacion_contacto.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Nueva Carta: Información de Carga Familiar -->
+            <div class="col-md-6">
+                <div class="card p-3 mb-4">
+                    <h5 class="card-title">Información de Carga Familiar</h5>
+                    {% for form in carga_formset %}
+                        <!-- Nombre de la Carga Familiar -->
+                        <div class="form-group mt-3">
+                            <label for="id_carga_familiar_nombre">Nombre de Carga Familiar:</label>
+                            {{ form.nombre_carga|add_class:"form-control" }}
+                            {% if form.nombre_carga.errors %}
+                                <div class="alert alert-danger mt-1">
+                                    {% for error in form.nombre_carga.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Relación con la Carga Familiar -->
+                        <div class="form-group mt-3">
+                            <label for="id_carga_familiar_relacion">Relación:</label>
+                            {{ form.relacion_carga|add_class:"form-control" }}
+                            {% if form.relacion_carga.errors %}
+                                <div class="alert alert-danger mt-1">
+                                    {% for error in form.relacion_carga.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
 
-        <!-- Botón de Envío -->
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary mt-4">Registrarse</button>
-        </div>
+        <!-- Botón para Enviar Formulario -->
+        <button type="submit" class="btn btn-primary mt-3">Registrar</button>
     </form>
 </div>
 
