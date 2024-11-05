@@ -3,7 +3,8 @@ from django.contrib.auth import login, authenticate, logout
 from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorUpdateForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Trabajador
+from .models import Trabajador, Cargo, Area, Departamento
+from django.http import JsonResponse
 
 def inicio(request):
     return render(request, 'index.html')
@@ -56,23 +57,34 @@ from django.db.models import Q
 
 @login_required
 def listar_trabajadores(request):
-    # Obtener valores de los filtros de búsqueda del request
-    sexo = request.GET.get('sexo')
-    cargo = request.GET.get('cargo')
-    area = request.GET.get('area')
-
-    # Filtrar trabajadores según los valores proporcionados en los filtros
     trabajadores = Trabajador.objects.all()
-    
+    sexo = request.GET.get('sexo')
+    cargo_id = request.GET.get('cargo')
+    area_id = request.GET.get('area')
+    departamento_id = request.GET.get('departamento')
+
+    # Aplicar filtros si los valores están presentes
     if sexo:
         trabajadores = trabajadores.filter(sexo=sexo)
-    if cargo:
-        trabajadores = trabajadores.filter(cargo__icontains=cargo)
-    if area:
-        trabajadores = trabajadores.filter(area__icontains=area)
+    if cargo_id:
+        trabajadores = trabajadores.filter(cargo_id=cargo_id)
+    if area_id:
+        trabajadores = trabajadores.filter(area_id=area_id)
+    if departamento_id:
+        trabajadores = trabajadores.filter(area__departamento_id=departamento_id)
 
-    return render(request, 'trabajadores.html', {'trabajadores': trabajadores, 'sexo': sexo, 'cargo': cargo, 'area': area})
-
+    context = {
+        'trabajadores': trabajadores,
+        'sexos': [('M', 'Masculino'), ('F', 'Femenino')],
+        'cargos': Cargo.objects.all(),
+        'areas': Area.objects.all(),
+        'departamentos': Departamento.objects.all(),
+        'selected_sexo': sexo,
+        'selected_cargo': cargo_id,
+        'selected_area': area_id,
+        'selected_departamento': departamento_id,
+    }
+    return render(request, 'trabajadores.html', context)
 
 @login_required
 def actualizar_trabajador(request, trabajador_id):
@@ -98,3 +110,13 @@ def eliminar_trabajador(request, trabajador_id):
         return redirect('login')  # Redirige al login o a la página de inicio
 
     return render(request, 'eliminar_trabajador_confirmacion.html', {'trabajador': trabajador})
+
+def cargar_areas(request):
+    departamento_id = request.GET.get("departamento_id")
+    areas = Area.objects.filter(departamento_id=departamento_id).values("id", "nombre")
+    return JsonResponse(list(areas), safe=False)
+
+def cargar_cargos(request):
+    area_id = request.GET.get("area_id")
+    cargos = Cargo.objects.filter(area_id=area_id).values("id", "nombre")
+    return JsonResponse(list(cargos), safe=False)
