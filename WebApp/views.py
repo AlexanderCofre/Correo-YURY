@@ -11,43 +11,21 @@ def inicio(request):
     return render(request, 'index.html')
 
 def registro_trabajador(request):
-    ContactoEmergenciaFormSet = formset_factory(ContactoEmergenciaForm, extra=1)
-    CargaFamiliarFormSet = formset_factory(CargaFamiliarForm, extra=1)
-
     if request.method == 'POST':
         trabajador_form = TrabajadorRegistroForm(request.POST)
-        contacto_formset = ContactoEmergenciaFormSet(request.POST, prefix='contacto')
-        carga_formset = CargaFamiliarFormSet(request.POST, prefix='carga')
-
-        if trabajador_form.is_valid() and contacto_formset.is_valid() and carga_formset.is_valid():
-            trabajador = trabajador_form.save()
-            
-            # Guardar contactos de emergencia
-            for form in contacto_formset:
-                contacto = form.save(commit=False)
-                contacto.trabajador = trabajador
-                contacto.save()
-                
-            # Guardar cargas familiares
-            for form in carga_formset:
-                carga = form.save(commit=False)
-                carga.trabajador = trabajador
-                carga.save()
-                
+        
+        if trabajador_form.is_valid():
+            trabajador_form.save()
             messages.success(request, "Registro exitoso")
-            return redirect('nombre_de_la_pagina_principal')
+            return redirect('inicio')
         else:
             messages.error(request, "Por favor, corrija los errores en el formulario.")
 
     else:
         trabajador_form = TrabajadorRegistroForm()
-        contacto_formset = ContactoEmergenciaFormSet(prefix='contacto')
-        carga_formset = CargaFamiliarFormSet(prefix='carga')
 
     context = {
-        'trabajador_form': trabajador_form,
-        'contacto_formset': contacto_formset,
-        'carga_formset': carga_formset
+        'trabajador_form': trabajador_form
     }
     return render(request, 'registro.html', context)
 
@@ -149,3 +127,28 @@ def cargar_cargos(request):
     area_id = request.GET.get("area_id")
     cargos = Cargo.objects.filter(area_id=area_id).values("id", "nombre")
     return JsonResponse(list(cargos), safe=False)
+
+@login_required
+def mi_cuenta(request):
+    trabajador = Trabajador.objects.get(id=request.user.id)  # Obtenemos el trabajador actual
+    carga_form = CargaFamiliarForm()
+    contacto_form = ContactoEmergenciaForm()
+
+    # Si el formulario de Carga Familiar es enviado
+    if request.method == 'POST':
+        if 'carga_familiar' in request.POST:  # Identificamos que se envió el formulario de carga familiar
+            carga_form = CargaFamiliarForm(request.POST)
+            if carga_form.is_valid():
+                carga_form.save(trabajador=trabajador)  # Pasamos el trabajador al formulario
+
+        # Si el formulario de Contacto de Emergencia es enviado
+        elif 'contacto_emergencia' in request.POST:  # Identificamos que se envió el formulario de contacto de emergencia
+            contacto_form = ContactoEmergenciaForm(request.POST)
+            if contacto_form.is_valid():
+                contacto_form.save(trabajador=trabajador)  # Pasamos el trabajador al formulario
+
+    return render(request, 'mi_cuenta.html', {
+        'trabajador': trabajador, 
+        'carga_form': carga_form,
+        'contacto_form': contacto_form
+    })
