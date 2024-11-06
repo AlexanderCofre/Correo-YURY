@@ -110,7 +110,7 @@ def actualizar_trabajador(request, trabajador_id):
 
         # Si ambos formularios son válidos, redirigimos
         if form_info_saved and form_detalles_saved:
-            return redirect('cuenta')
+            return redirect('trabajadores')
 
     else:
         # Si no es un POST, pre-cargar los formularios con la instancia del trabajador
