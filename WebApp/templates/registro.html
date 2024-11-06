@@ -19,9 +19,9 @@
         {% csrf_token %}
 
         <div class="row">
-            <!-- Card 1: Información Personal -->
-            <div class="col-md-4">
-                <div class="card p-3 mb-4">
+            <!-- Card: Información Personal (Columna Izquierda) -->
+            <div class="col-md-6">
+                <div class="card p-4 mb-4">
                     <h5 class="card-title">Información Personal</h5>
 
                     <!-- Campo de RUT -->
@@ -78,69 +78,10 @@
                 </div>
             </div>
 
-            <!-- Card 2: Información de Empleo -->
-            <div class="col-md-4">
-                <div class="card p-3 mb-4">
-                    <h5 class="card-title">Información de Empleo</h5>
-
-                    <!-- Campo de Fecha de Ingreso -->
-                    <div class="form-group mt-3">
-                        <label for="id_fecha_ingreso">Fecha de Ingreso:</label>
-                        {{ trabajador_form.fecha_ingreso|add_class:"form-control" }}
-                        {% if trabajador_form.fecha_ingreso.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in trabajador_form.fecha_ingreso.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Campo de Departamento -->
-                    <div class="form-group mt-3">
-                        <label for="id_departamento">Departamento:</label>
-                        {{ trabajador_form.departamento|add_class:"form-control" }}
-                        {% if trabajador_form.departamento.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in trabajador_form.departamento.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Campo de Área -->
-                    <div class="form-group mt-3">
-                        <label for="id_area">Área:</label>
-                        {{ trabajador_form.area|add_class:"form-control" }}
-                        {% if trabajador_form.area.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in trabajador_form.area.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Campo de Cargo -->
-                    <div class="form-group mt-3">
-                        <label for="id_cargo">Cargo:</label>
-                        {{ trabajador_form.cargo|add_class:"form-control" }}
-                        {% if trabajador_form.cargo.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in trabajador_form.cargo.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3: Información de Contacto -->
-            <div class="col-md-4">
-                <div class="card p-3 mb-4">
-                    <h5 class="card-title">Información de Contacto</h5>
+            <!-- Card: Información de la Cuenta (Columna Derecha) -->
+            <div class="col-md-6">
+                <div class="card p-4 mb-4">
+                    <h5 class="card-title">Información de la Cuenta</h5>
 
                     <!-- Campo de Correo Electrónico -->
                     <div class="form-group mt-3">
@@ -180,87 +121,6 @@
                             </div>
                         {% endif %}
                     </div>
-                </div>
-            </div>
-
-            <!-- Nueva Carta: Información de Contacto de Emergencia -->
-            <div class="col-md-6">
-                <div class="card p-3 mb-4">
-                    <h5 class="card-title">Información de Contacto de Emergencia</h5>
-                    {% for form in contacto_formset %}
-                        <!-- Nombre de Contacto de Emergencia -->
-                        <div class="form-group mt-3">
-                            <label for="id_contacto_emergencia_nombre">Nombre del Contacto:</label>
-                            {{ form.nombre_contacto|add_class:"form-control" }}
-                            {% if form.nombre_contacto.errors %}
-                                <div class="alert alert-danger mt-1">
-                                    {% for error in form.nombre_contacto.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Teléfono de Contacto de Emergencia -->
-                        <div class="form-group mt-3">
-                            <label for="id_contacto_emergencia_telefono">Teléfono de Contacto:</label>
-                            {{ form.telefono_contacto|add_class:"form-control" }}
-                            {% if form.telefono_contacto.errors %}
-                                <div class="alert alert-danger mt-1">
-                                    {% for error in form.telefono_contacto.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Relación con el Contacto de Emergencia -->
-                        <div class="form-group mt-3">
-                            <label for="id_contacto_emergencia_relacion">Relación:</label>
-                            {{ form.relacion_contacto|add_class:"form-control" }}
-                            {% if form.relacion_contacto.errors %}
-                                <div class="alert alert-danger mt-1">
-                                    {% for error in form.relacion_contacto.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- Nueva Carta: Información de Carga Familiar -->
-            <div class="col-md-6">
-                <div class="card p-3 mb-4">
-                    <h5 class="card-title">Información de Carga Familiar</h5>
-                    {% for form in carga_formset %}
-                        <!-- Nombre de la Carga Familiar -->
-                        <div class="form-group mt-3">
-                            <label for="id_carga_familiar_nombre">Nombre de Carga Familiar:</label>
-                            {{ form.nombre_carga|add_class:"form-control" }}
-                            {% if form.nombre_carga.errors %}
-                                <div class="alert alert-danger mt-1">
-                                    {% for error in form.nombre_carga.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Relación con la Carga Familiar -->
-                        <div class="form-group mt-3">
-                            <label for="id_carga_familiar_relacion">Relación:</label>
-                            {{ form.relacion_carga|add_class:"form-control" }}
-                            {% if form.relacion_carga.errors %}
-                                <div class="alert alert-danger mt-1">
-                                    {% for error in form.relacion_carga.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
                 </div>
             </div>
         </div>
