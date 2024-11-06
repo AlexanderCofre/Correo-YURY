@@ -64,27 +64,6 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    function confirmarEliminacion(trabajadorId) {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Esta acción no se puede deshacer",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Redirige a la URL de eliminación, reemplazando el ID
-                window.location.href = `{% url 'eliminar_trabajador' 0 %}`.replace('0', trabajadorId);
-            }
-        });
-    }
-</script>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
