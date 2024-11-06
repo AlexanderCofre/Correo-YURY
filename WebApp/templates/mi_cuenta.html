@@ -175,11 +175,14 @@
                     <button type="submit" name="contacto_emergencia" class="btn btn-primary mt-3">Registrar Contacto</button>
                 </form>
             </div>
+            <div class="row mt-5">
+                <div class="col-12">
+                    <button class="btn btn-danger" onclick="confirmarEliminacion({{ trabajador.id }})">Eliminar Cuenta</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -196,8 +199,9 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 // Redirige a la URL de eliminación, reemplazando el ID
-                window.location.href = `{% url 'eliminar_trabajador' 0 %}`.replace('0', trabajadorId);
+                window.location.href = "{% url 'eliminar_cuenta' trabajador.id %}";
             }
         });
     }
 </script>
+{% endblock %}

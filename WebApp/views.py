@@ -4,7 +4,7 @@ from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorUpdate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Trabajador, Cargo, Area, Departamento
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 
 def inicio(request):
     return render(request, 'index.html')
@@ -125,15 +125,19 @@ def actualizar_trabajador(request, trabajador_id):
     return render(request, 'actualizar_trabajador.html', context)
 
 @login_required
-def eliminar_trabajador(request, trabajador_id):
-    trabajador = get_object_or_404(Trabajador, id=trabajador_id)
-
-    # Eliminar al trabajador directamente
-    trabajador.delete()
-    messages.success(request, "El trabajador ha sido eliminado exitosamente.")
-    
-    # Redirigir a la lista de trabajadores o a la página deseada
-    return redirect('trabajadores')  # Cambia 'trabajadores' por la URL deseada
+def eliminar_cuenta(request, trabajador_id):
+    # Asegurarse de que el trabajador que está intentando eliminar su cuenta es el mismo que está logueado
+    if request.user.id == trabajador_id:
+        try:
+            trabajador = Trabajador.objects.get(id=trabajador_id)
+            trabajador.delete()
+            messages.success(request, "Tu cuenta ha sido eliminada con éxito.")
+            return redirect('login')  # Redirigir a la página de login
+        except Trabajador.DoesNotExist:
+            raise Http404("El trabajador no existe.")
+    else:
+        messages.error(request, "No tienes permisos para eliminar esta cuenta.")
+        return redirect('inicio')  # O redirigir a la página que prefieras
 
 def cargar_areas(request):
     departamento_id = request.GET.get('departamento_id')
