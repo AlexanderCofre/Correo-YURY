@@ -32,10 +32,11 @@ class Trabajador(AbstractUser):
     last_name = models.CharField(max_length=150, blank=True)  
     email = models.EmailField(max_length=254, unique=True, blank=True) 
     sexo = models.CharField(max_length=1, choices=[('M', 'Masculino'), ('F', 'Femenino')])
-    fecha_ingreso = models.DateField()
-    cargo = models.ForeignKey(Cargo, on_delete=models.SET_NULL, null=True, related_name="trabajadores")
-    area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, related_name="trabajadores")
-    departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, null=True, related_name="trabajadores")
+    fecha_ingreso = models.DateField(null=True, blank=True)
+    cargo = models.ForeignKey(Cargo, on_delete=models.CASCADE, null=True, blank=True, related_name="trabajadores")
+    area = models.ForeignKey(Area, on_delete=models.CASCADE, null=True, blank=True, related_name="trabajadores")
+    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE, null=True, blank=True, related_name="trabajadores")
+
 
     def __str__(self):
         return f"{self.first_name}, {self.last_name} ({self.RUT})"
