@@ -1,13 +1,13 @@
 from django.contrib import admin
 from .models import Trabajador, ContactoEmergencia, CargaFamiliar, Departamento
 
-# Configuración para mostrar el modelo Trabajador en el admin
+# Configuración para mostrar el modelo Trabajador
 @admin.register(Trabajador)
 class TrabajadorAdmin(admin.ModelAdmin):
     list_display = ('username', 'RUT', 'first_name', 'last_name', 'email', 'cargo', 'area', 'fecha_ingreso', 'is_active')
     search_fields = ('first_name', 'last_name', 'RUT', 'cargo', 'area')
     list_filter = ('sexo', 'cargo', 'area', 'is_active')
-    ordering = ('first_name',)  # Cambia esto si deseas otro orden
+    ordering = ('first_name', 'sexo')  
     fieldsets = (
         ('Información Personal', {
             'fields': ('username', 'RUT', 'first_name', 'last_name', 'sexo', 'fecha_ingreso', 'email')
@@ -20,14 +20,14 @@ class TrabajadorAdmin(admin.ModelAdmin):
         }),
     )
 
-# Configuración para mostrar el modelo ContactoEmergencia en el admin
+# Configuración para mostrar el modelo ContactoEmergencia
 @admin.register(ContactoEmergencia)
 class ContactoEmergenciaAdmin(admin.ModelAdmin):
     list_display = ('trabajador', 'nombre_contacto', 'relacion', 'telefono_contacto')
     search_fields = ('trabajador__first_name', 'trabajador__last_name', 'nombre_contacto')
     list_filter = ('relacion',)
 
-# Configuración para mostrar el modelo CargaFamiliar en el admin
+# Configuración para mostrar el modelo CargaFamiliar
 @admin.register(CargaFamiliar)
 class CargaFamiliarAdmin(admin.ModelAdmin):
     list_display = ('trabajador', 'nombre_carga', 'parentesco', 'sexo', 'rut')
