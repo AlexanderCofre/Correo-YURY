@@ -10,58 +10,12 @@ class TrabajadorRegistroForm(UserCreationForm):
     last_name = forms.CharField(max_length=150, required=True)
     email = forms.EmailField(required=True)
     sexo = forms.ChoiceField(choices=[('M', 'Masculino'), ('F', 'Femenino')])
-    fecha_ingreso = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
-
-    departamento = forms.ModelChoiceField(
-    queryset=Departamento.objects.all(), 
-    required=True, 
-    label="Departamento", 
-    empty_label="Seleccione un departamento"
-    )
-    area = forms.ModelChoiceField(
-        queryset=Area.objects.none(), 
-        required=True, 
-        label="Área", 
-        empty_label=None
-    )
-    cargo = forms.ModelChoiceField(
-        queryset=Cargo.objects.none(), 
-        required=True, 
-        label="Cargo", 
-        empty_label=None
-    )
 
     class Meta:
         model = Trabajador
         fields = [
-            'password1', 'password2', 'RUT', 'first_name', 'last_name', 'email', 'sexo',
-            'fecha_ingreso', 'departamento', 'area', 'cargo'
+            'password1', 'password2', 'RUT', 'first_name', 'last_name', 'email', 'sexo'
         ]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        
-        # Configurar el queryset de cargos según el área seleccionada
-        if 'area' in self.data:
-            try:
-                area_id = int(self.data.get('area'))
-                self.fields['cargo'].queryset = Cargo.objects.filter(area_id=area_id)
-            except (ValueError, TypeError):
-                self.fields['cargo'].queryset = Cargo.objects.none()
-        elif self.instance.pk:
-            self.fields['cargo'].queryset = self.instance.area.cargos.all()
-        else:
-            self.fields['cargo'].queryset = Cargo.objects.none()  # Ninguna opción por defecto
-
-        # Asegúrate de que el área se configure correctamente también
-        if 'departamento' in self.data:
-            try:
-                departamento_id = int(self.data.get('departamento'))
-                self.fields['area'].queryset = Area.objects.filter(departamento_id=departamento_id)
-            except (ValueError, TypeError):
-                self.fields['area'].queryset = Area.objects.none()
-        elif self.instance.pk:
-            self.fields['area'].queryset = self.instance.departamento.areas.all()
 
     def save(self, commit=True):
         trabajador = super().save(commit=False)
@@ -153,9 +107,16 @@ class ContactoEmergenciaForm(forms.ModelForm):
             'relacion': 'Relación con el Trabajador'
         }
 
+    # Modificación para asociar el trabajador automáticamente
+    def save(self, commit=True, trabajador=None):
+        if trabajador:
+            self.instance.trabajador = trabajador
+        return super().save(commit=commit)
+
 # Formulario para CargaFamiliar
 class CargaFamiliarForm(forms.ModelForm):
     rut = forms.CharField(validators=[], label="RUT")
+    sexo = forms.ChoiceField(choices=[('M', 'Masculino'), ('F', 'Femenino')])
 
     class Meta:
         model = CargaFamiliar
@@ -165,6 +126,12 @@ class CargaFamiliarForm(forms.ModelForm):
             'parentesco': 'Parentesco',
             'sexo': 'Sexo'
         }
+
+    def save(self, commit=True, trabajador=None):
+        # Asignar el trabajador actual al campo trabajador
+        if trabajador:
+            self.instance.trabajador = trabajador
+        return super().save(commit=commit)
 
     def clean_rut(self):
         rut = self.cleaned_data.get('rut')
