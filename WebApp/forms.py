@@ -1,3 +1,4 @@
+import datetime
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import Trabajador, Cargo, Area, Departamento, ContactoEmergencia, CargaFamiliar
@@ -66,6 +67,78 @@ class TrabajadorRegistroForm(UserCreationForm):
         
         # Comparar el dígito calculado con el dígito verificador
         return digito_calculado == digito_verificador
+
+class TrabajadorDetallesForm(forms.ModelForm):
+    class Meta:
+        model = Trabajador
+        fields = ['fecha_ingreso', 'cargo', 'area', 'departamento']
+        
+        widgets = {
+            'fecha_ingreso': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'cargo': forms.Select(attrs={'class': 'form-control'}),
+            'area': forms.Select(attrs={'class': 'form-control'}),
+            'departamento': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    # Validación para verificar que se seleccione un departamento antes de un área o cargo
+    def clean(self):
+        cleaned_data = super().clean()
+        departamento = cleaned_data.get("departamento")
+        area = cleaned_data.get("area")
+        cargo = cleaned_data.get("cargo")
+
+        if area and not departamento:
+            raise ValidationError("Seleccione un departamento antes de elegir un área.")
+        if cargo and not area:
+            raise ValidationError("Seleccione un área antes de elegir un cargo.")
+        return cleaned_data
+
+    
+    # Validación para la fecha de ingreso
+    def clean_fecha_ingreso(self):
+        fecha_ingreso = self.cleaned_data.get("fecha_ingreso")
+        if fecha_ingreso and fecha_ingreso > datetime.date.today():
+            raise ValidationError("La fecha de ingreso no puede estar en el futuro.")
+        return fecha_ingreso
+    
+    def clean_departamento(self):
+        departamento = self.cleaned_data.get('departamento')
+        if not departamento:
+            raise ValidationError('Este campo es obligatorio.')
+        return departamento
+
+    def clean_area(self):
+        area = self.cleaned_data.get('area')
+        if not area:
+            raise ValidationError('Este campo es obligatorio.')
+        return area
+
+    def clean_cargo(self):
+        cargo = self.cleaned_data.get('cargo')
+        if not cargo:
+            raise ValidationError('Este campo es obligatorio.')
+        return cargo
+    
+    # Métodos para cargar áreas y cargos dinámicamente
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Si se está editando un trabajador con un departamento asignado, filtrar áreas
+        # Si se está editando un trabajador con un departamento asignado, filtrar áreas
+        if self.instance.pk:
+            if self.instance.departamento:
+                self.fields['area'].queryset = Area.objects.filter(departamento_id=self.instance.departamento.id)
+            if self.instance.area:
+                self.fields['cargo'].queryset = Cargo.objects.filter(area_id=self.instance.area.id)
+        # Si estamos recibiendo datos del formulario (POST), filtramos área y cargo
+        elif 'departamento' in self.data:
+            departamento_id = self.data.get('departamento')
+            self.fields['area'].queryset = Area.objects.filter(departamento_id=departamento_id)
+
+        if 'area' in self.data:
+            area_id = self.data.get('area')
+            self.fields['cargo'].queryset = Cargo.objects.filter(area_id=area_id)
+
 
 
 class TrabajadorLoginForm(AuthenticationForm):

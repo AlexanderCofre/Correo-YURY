@@ -1,9 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorUpdateForm, ContactoEmergenciaForm, CargaFamiliarForm
+from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorUpdateForm, ContactoEmergenciaForm, CargaFamiliarForm, TrabajadorDetallesForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.forms import formset_factory
 from .models import Trabajador, Cargo, Area, Departamento
 from django.http import JsonResponse
 
@@ -17,7 +16,7 @@ def registro_trabajador(request):
         if trabajador_form.is_valid():
             trabajador_form.save()
             messages.success(request, "Registro exitoso")
-            return redirect('inicio')
+            return redirect('login')
         else:
             messages.error(request, "Por favor, corrija los errores en el formulario.")
 
@@ -50,21 +49,10 @@ def logout_trabajador(request):
     return redirect('login')  # Redirigir al formulario de inicio de sesión
 
 @login_required
-def actualizar_trabajador(request):
-    if request.method == "POST":
-        form = TrabajadorUpdateForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('profile')  # Redirigir a la página de perfil del trabajador
-    else:
-        form = TrabajadorUpdateForm(instance=request.user)
-    return render(request, 'actualizar.html', {'form': form})
-
-from django.db.models import Q
-
-@login_required
 def listar_trabajadores(request):
-    trabajadores = Trabajador.objects.all()
+    # Filtrar para obtener solo los trabajadores
+    trabajadores = Trabajador.objects.filter(is_superuser=False)
+
     sexo = request.GET.get('sexo')
     cargo_id = request.GET.get('cargo')
     area_id = request.GET.get('area')
@@ -95,38 +83,69 @@ def listar_trabajadores(request):
 
 @login_required
 def actualizar_trabajador(request, trabajador_id):
-    trabajador = get_object_or_404(Trabajador, id=trabajador_id)
-    
-    if request.method == 'POST':
-        form = TrabajadorUpdateForm(request.POST, instance=trabajador)
-        if form.is_valid():
-            form.save()
-            return redirect('trabajadores')  # Redirige a la lista de trabajadores después de actualizar
-    else:
-        form = TrabajadorUpdateForm(instance=trabajador)
+    trabajador = Trabajador.objects.get(id=trabajador_id)
 
-    return render(request, 'actualizar_trabajador.html', {'form': form, 'trabajador': trabajador})
+    if request.method == "POST":
+        # Crear formularios con los datos del POST y la instancia del trabajador
+        form_info = TrabajadorUpdateForm(request.POST, instance=trabajador)
+        form_detalles = TrabajadorDetallesForm(request.POST, instance=trabajador)
+
+        # Procesar primero el formulario de información básica
+        if form_info.is_valid():
+            form_info.save()
+            # Si el formulario de información básica es válido, guardamos los cambios de este formulario
+            form_info_saved = True
+        else:
+            form_info_saved = False
+            print("Errores en form_info:", form_info.errors)
+
+        # Procesar el formulario de detalles
+        if form_detalles.is_valid():
+            form_detalles.save()
+            # Si el formulario de detalles es válido, guardamos los cambios de este formulario
+            form_detalles_saved = True
+        else:
+            form_detalles_saved = False
+            print("Errores en form_detalles:", form_detalles.errors)
+
+        # Si ambos formularios son válidos, redirigimos
+        if form_info_saved and form_detalles_saved:
+            return redirect('cuenta')
+
+    else:
+        # Si no es un POST, pre-cargar los formularios con la instancia del trabajador
+        form_info = TrabajadorUpdateForm(instance=trabajador)
+        form_detalles = TrabajadorDetallesForm(instance=trabajador)
+
+    context = {
+        'form_info': form_info,
+        'form_detalles': form_detalles
+    }
+
+    return render(request, 'actualizar_trabajador.html', context)
 
 @login_required
 def eliminar_trabajador(request, trabajador_id):
     trabajador = get_object_or_404(Trabajador, id=trabajador_id)
-    
-    if request.method == 'POST':
-        trabajador.delete()
-        messages.success(request, "Tu cuenta ha sido eliminada exitosamente.")
-        return redirect('login')  # Redirige al login o a la página de inicio
 
-    return render(request, 'eliminar_trabajador_confirmacion.html', {'trabajador': trabajador})
+    # Eliminar al trabajador directamente
+    trabajador.delete()
+    messages.success(request, "El trabajador ha sido eliminado exitosamente.")
+    
+    # Redirigir a la lista de trabajadores o a la página deseada
+    return redirect('trabajadores')  # Cambia 'trabajadores' por la URL deseada
 
 def cargar_areas(request):
-    departamento_id = request.GET.get("departamento_id")
-    areas = Area.objects.filter(departamento_id=departamento_id).values("id", "nombre")
-    return JsonResponse(list(areas), safe=False)
+    departamento_id = request.GET.get('departamento_id')
+    areas = Area.objects.filter(departamento_id=departamento_id)
+    areas_data = [{'id': area.id, 'nombre': area.nombre} for area in areas]
+    return JsonResponse(areas_data, safe=False)
 
 def cargar_cargos(request):
-    area_id = request.GET.get("area_id")
-    cargos = Cargo.objects.filter(area_id=area_id).values("id", "nombre")
-    return JsonResponse(list(cargos), safe=False)
+    area_id = request.GET.get('area_id')
+    cargos = Cargo.objects.filter(area_id=area_id)
+    cargos_data = [{'id': cargo.id, 'nombre': cargo.nombre} for cargo in cargos]
+    return JsonResponse(cargos_data, safe=False)
 
 @login_required
 def mi_cuenta(request):

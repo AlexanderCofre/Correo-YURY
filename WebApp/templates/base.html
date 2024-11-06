@@ -38,10 +38,10 @@
                                 <a class="nav-link mx-lg-2" href="{% url 'trabajadores' %}">Trabajadores</a>
                             </li>
                         {% endif %}
-                        {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link mx-lg-2" href="{% url 'cuenta' %}">Mi Cuenta</a>
-                        </li>
+                        {% if user.is_authenticated and not user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link mx-lg-2" href="{% url 'cuenta' %}">Mi Cuenta</a>
+                            </li>
                         {% endif %}
                     </ul>
                 </div>
