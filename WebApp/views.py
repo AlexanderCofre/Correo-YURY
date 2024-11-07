@@ -217,13 +217,19 @@ def agregar_carga_familiar(request):
 
 @login_required
 def agregar_contacto_emergencia(request):
+    try:
+        trabajador = request.user  # Obtener el trabajador vinculado al usuario
+    except Trabajador.DoesNotExist:
+        # Si no existe el trabajador asociado, puedes redirigir o mostrar un mensaje de error
+        return redirect('error')  # O cualquier otra página para manejar el error
+    
     if request.method == 'POST':
         # Crear un formulario con los datos del POST
         form = ContactoEmergenciaForm(request.POST)
         if form.is_valid():
             # Guardamos el formulario, asociando el contacto al trabajador
             contacto_emergencia = form.save(commit=False)
-            contacto_emergencia.trabajador = request.user.trabajador  # Asocia el contacto con el trabajador actual
+            contacto_emergencia.trabajador = trabajador  # Asocia el contacto con el trabajador actual
             contacto_emergencia.save()  # Guardamos el contacto
             return redirect('cuenta')  # Redirige a la cuenta o a donde desees
     else:
