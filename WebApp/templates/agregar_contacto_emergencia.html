@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block title %}Agregar Contacto de Emergencia{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card p-4">
+        <h2 class="card-title">{{ contacto_id|default:"Agregar" }} Contacto de Emergencia</h2>
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Campo Nombre del Contacto -->
+            <div class="form-group mt-3">
+                <label for="id_nombre_contacto">Nombre del Contacto:</label>
+                {{ form.nombre_contacto|add_class:"form-control" }}
+                {% if form.nombre_contacto.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {% for error in form.nombre_contacto.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Campo Apellido del Contacto -->
+            <div class="form-group mt-3">
+                <label for="id_apellido_contacto">Apellido del Contacto:</label>
+                {{ form.apellido_contacto|add_class:"form-control" }}
+                {% if form.apellido_contacto.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {% for error in form.apellido_contacto.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Campo Relación con el Trabajador -->
+            <div class="form-group mt-3">
+                <label for="id_relacion">Relación con el Trabajador:</label>
+                {{ form.relacion|add_class:"form-control" }}
+                {% if form.relacion.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {% for error in form.relacion.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Campo Teléfono de Contacto -->
+            <div class="form-group mt-3">
+                <label for="id_telefono_contacto">Teléfono de Contacto:</label>
+                {{ form.telefono_contacto|add_class:"form-control" }}
+                {% if form.telefono_contacto.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {% for error in form.telefono_contacto.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-between mt-3">
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <a href="{% url 'cuenta' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -8,7 +8,7 @@
     <h2 class="mb-4">Mi Cuenta</h2>
     
     <div class="row">
-        <!-- Carta de Información Personal -->
+        <!-- Información Personal -->
         <div class="col-md-6">
             <div class="card p-4 mb-4">
                 <h5 class="card-title">Información Personal</h5>
@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <!-- Carta de Información de Empleo -->
+        <!-- Información de Empleo (sin botón de edición) -->
         <div class="col-md-6">
             <div class="card p-4 mb-4">
                 <h5 class="card-title">Información de Empleo</h5>
@@ -55,131 +55,59 @@
         </div>
     </div>
 
-    <!-- Formularios debajo de las cartas -->
+    <!-- Sección para Carga Familiar y Contacto de Emergencia -->
     <div class="row mt-5">
-        <!-- Formulario para Carga Familiar -->
+        <!-- Información de Carga Familiar -->
         <div class="col-md-6">
             <div class="card p-4 mb-4">
-                <h5 class="card-title">Registrar Carga Familiar</h5>
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="form-group mt-3">
-                        <label for="id_nombre_carga">Nombre de la Carga Familiar:</label>
-                        {{ carga_form.nombre_carga|add_class:"form-control" }}
-                        {% if carga_form.nombre_carga.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in carga_form.nombre_carga.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="id_parentesco">Parentesco:</label>
-                        {{ carga_form.parentesco|add_class:"form-control" }}
-                        {% if carga_form.parentesco.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in carga_form.parentesco.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="id_sexo">Sexo:</label>
-                        {{ carga_form.sexo|add_class:"form-control" }}
-                        {% if carga_form.sexo.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in carga_form.sexo.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="id_rut">RUT:</label>
-                        {{ carga_form.rut|add_class:"form-control" }}
-                        {% if carga_form.rut.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in carga_form.rut.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Botón de envío específico para este formulario -->
-                    <button type="submit" name="carga_familiar" class="btn btn-primary mt-3">Registrar Carga Familiar</button>
-                </form>
+                <h5 class="card-title">Carga Familiar</h5>
+                
+                {% if trabajador.cargas_familiares.exists %}
+                    {% for carga in trabajador.cargas_familiares.all %}
+                        <p><strong>Nombre de la Carga Familiar:</strong> {{ carga.nombre_carga }}</p>
+                        <p><strong>Parentesco:</strong> {{ carga.parentesco }}</p>
+                        <p><strong>Sexo:</strong> {{ carga.get_sexo_display }}</p>
+                        <p><strong>RUT:</strong> {{ carga.rut }}</p>
+                        <hr>
+        
+                        <!-- Botón para editar carga familiar -->
+                        <a href="{% url 'editar_carga_familiar' carga_id=carga.id %}" class="btn btn-primary mt-3">Editar Carga Familiar</a>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay cargas familiares registradas.</p>
+                    <a href="{% url 'agregar_carga_familiar' %}" class="btn btn-primary mt-3">Agregar Carga Familiar</a>
+                {% endif %}
             </div>
-        </div>
+        </div>        
 
-        <!-- Formulario para Contacto de Emergencia -->
+        <!-- Información de Contacto de Emergencia -->
         <div class="col-md-6">
             <div class="card p-4 mb-4">
-                <h5 class="card-title">Registrar Contacto de Emergencia</h5>
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="form-group mt-3">
-                        <label for="id_nombre_contacto">Nombre del Contacto:</label>
-                        {{ contacto_form.nombre_contacto|add_class:"form-control" }}
-                        {% if contacto_form.nombre_contacto.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in contacto_form.nombre_contacto.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="id_apellido_contacto">Apellido del Contacto:</label>
-                        {{ contacto_form.apellido_contacto|add_class:"form-control" }}
-                        {% if contacto_form.apellido_contacto.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in contacto_form.apellido_contacto.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="id_relacion">Relación con el Trabajador:</label>
-                        {{ contacto_form.relacion|add_class:"form-control" }}
-                        {% if contacto_form.relacion.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in contacto_form.relacion.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-group mt-3">
-                        <label for="id_telefono_contacto">Teléfono de Contacto:</label>
-                        {{ contacto_form.telefono_contacto|add_class:"form-control" }}
-                        {% if contacto_form.telefono_contacto.errors %}
-                            <div class="alert alert-danger mt-1">
-                                {% for error in contacto_form.telefono_contacto.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Botón de envío específico para este formulario -->
-                    <button type="submit" name="contacto_emergencia" class="btn btn-primary mt-3">Registrar Contacto</button>
-                </form>
+                <h5 class="card-title">Contacto de Emergencia</h5>
+                
+                {% if trabajador.contactos_emergencia.exists %}
+                    {% for contacto in trabajador.contactos_emergencia.all %}
+                        <p><strong>Nombre del Contacto:</strong> {{ contacto.nombre_contacto }}</p>
+                        <p><strong>Apellido del Contacto:</strong> {{ contacto.apellido_contacto }}</p>
+                        <p><strong>Relación con el Trabajador:</strong> {{ contacto.relacion }}</p>
+                        <p><strong>Teléfono de Contacto:</strong> {{ contacto.telefono_contacto }}</p>
+                        <hr>
+        
+                        <!-- Botón para editar contacto de emergencia -->
+                        <a href="{% url 'editar_contacto_emergencia' contacto_id=contacto.id %}" class="btn btn-primary mt-3">Editar Contacto de Emergencia</a>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay contactos de emergencia registrados.</p>
+                    <a href="{% url 'agregar_contacto_emergencia' %}" class="btn btn-primary mt-3">Agregar Contacto de Emergencia</a>
+                {% endif %}
             </div>
-            <div class="row mt-5">
-                <div class="col-12">
-                    <button class="btn btn-danger" onclick="confirmarEliminacion({{ trabajador.id }})">Eliminar Cuenta</button>
-                </div>
-            </div>
+        </div>        
+    </div>
+
+    <!-- Botón para eliminar cuenta -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <button class="btn btn-danger" onclick="confirmarEliminacion({{ trabajador.id }})">Eliminar Cuenta</button>
         </div>
     </div>
 </div>
@@ -198,7 +126,6 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Redirige a la URL de eliminación, reemplazando el ID
                 window.location.href = "{% url 'eliminar_cuenta' trabajador.id %}";
             }
         });

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block title %}Agregar Carga Familiar{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card p-4">
+        <h2 class="card-title">{{ carga.id|default:"Agregar" }} Carga Familiar</h2>
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Campo Nombre de Carga -->
+            <div class="form-group mt-3">
+                <label for="id_nombre_carga">Nombre de la Carga Familiar:</label>
+                {{ form.nombre_carga|add_class:"form-control" }}
+                {% if form.nombre_carga.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {% for error in form.nombre_carga.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Campo Parentesco -->
+            <div class="form-group mt-3">
+                <label for="id_parentesco">Parentesco:</label>
+                {{ form.parentesco|add_class:"form-control" }}
+                {% if form.parentesco.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {% for error in form.parentesco.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Campo Sexo -->
+            <div class="form-group mt-3">
+                <label for="id_sexo">Sexo:</label>
+                {{ form.sexo|add_class:"form-control" }}
+                {% if form.sexo.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {% for error in form.sexo.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Campo RUT -->
+            <div class="form-group mt-3">
+                <label for="id_rut">RUT:</label>
+                {{ form.rut|add_class:"form-control" }}
+                {% if form.rut.errors %}
+                    <div class="alert alert-danger mt-1">
+                        {% for error in form.rut.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Botones con margen superior -->
+            <div class="d-flex justify-content-between mt-3">
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <a href="{% url 'cuenta' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

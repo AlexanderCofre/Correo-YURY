@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorUpdateForm, ContactoEmergenciaForm, CargaFamiliarForm, TrabajadorDetallesForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Trabajador, Cargo, Area, Departamento
+from .models import Trabajador, Cargo, Area, Departamento, CargaFamiliar, ContactoEmergencia
 from django.http import Http404, JsonResponse
 
 def inicio(request):
@@ -175,3 +175,73 @@ def mi_cuenta(request):
         'carga_form': carga_form,
         'contacto_form': contacto_form
     })
+
+@login_required
+def editar_carga_familiar(request, carga_id=None):
+    # Aquí ya no necesitas acceder a un campo `trabajador` porque `request.user` es el modelo Trabajador
+    trabajador = request.user
+
+    # Si existe carga_familiar, obtenla, si no, crear un nuevo objeto vacío
+    if carga_id:
+        carga = get_object_or_404(CargaFamiliar, id=carga_id, trabajador=trabajador)
+    else:
+        carga = None
+
+    if request.method == 'POST':
+        form = CargaFamiliarForm(request.POST, instance=carga)
+        if form.is_valid():
+            carga_familiar = form.save(commit=False)
+            carga_familiar.trabajador = trabajador  # Asocia la carga con el trabajador actual
+            carga_familiar.save()
+            return redirect('cuenta')  # Redirige a la página de cuenta después de guardar
+    else:
+        form = CargaFamiliarForm(instance=carga)
+
+    return render(request, 'editar_carga_familiar.html', {'form': form})
+
+@login_required
+def agregar_carga_familiar(request):
+    trabajador = request.user  # Obtener el trabajador vinculado al usuario
+
+    if request.method == 'POST':
+        form = CargaFamiliarForm(request.POST)
+        if form.is_valid():
+            nueva_carga = form.save(commit=False)
+            nueva_carga.trabajador = trabajador  # Asociar la carga con el trabajador actual
+            nueva_carga.save()
+            return redirect('cuenta')  # Redirigir a la página "Cuenta" o donde necesites
+    else:
+        form = CargaFamiliarForm()
+    
+    return render(request, 'agregar_carga_familiar.html', {'form': form})
+
+@login_required
+def agregar_contacto_emergencia(request):
+    if request.method == 'POST':
+        # Crear un formulario con los datos del POST
+        form = ContactoEmergenciaForm(request.POST)
+        if form.is_valid():
+            # Guardamos el formulario, asociando el contacto al trabajador
+            contacto_emergencia = form.save(commit=False)
+            contacto_emergencia.trabajador = request.user.trabajador  # Asocia el contacto con el trabajador actual
+            contacto_emergencia.save()  # Guardamos el contacto
+            return redirect('cuenta')  # Redirige a la cuenta o a donde desees
+    else:
+        form = ContactoEmergenciaForm()  # Formulario vacío para la vista GET
+    
+    return render(request, 'agregar_contacto_emergencia.html', {'form': form})
+
+@login_required
+def editar_contacto_emergencia(request, contacto_id):
+    # Obtener el contacto de emergencia asociado al trabajador actual
+    contacto = get_object_or_404(ContactoEmergencia, id=contacto_id, trabajador=request.user)
+
+    if request.method == 'POST':
+        form = ContactoEmergenciaForm(request.POST, instance=contacto)
+        if form.is_valid():
+            form.save()  # Guardamos el formulario
+            return redirect('cuenta')  # O donde necesites redirigir
+    else:
+        form = ContactoEmergenciaForm(instance=contacto)
+    
+    return render(request, 'editar_contacto_emergencia.html', {'form': form, 'contacto': contacto})

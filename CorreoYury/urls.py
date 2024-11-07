@@ -30,4 +30,8 @@ urlpatterns = [
     path("cargar-areas/", views.cargar_areas, name="cargar_areas"),
     path("cargar_cargos/", views.cargar_cargos, name="cargar_cargos"),
     path('mi-cuenta/', views.mi_cuenta, name='cuenta'),
+    path('agregar_carga_familiar/', views.agregar_carga_familiar, name='agregar_carga_familiar'),
+    path('carga_familiar/<int:carga_id>/', views.editar_carga_familiar, name='editar_carga_familiar'),
+    path('contacto_emergencia/agregar/', views.agregar_contacto_emergencia, name='agregar_contacto_emergencia'),
+    path('contacto_emergencia/editar/<int:contacto_id>/', views.editar_contacto_emergencia, name='editar_contacto_emergencia'),
 ]
