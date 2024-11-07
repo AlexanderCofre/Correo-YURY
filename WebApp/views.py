@@ -83,46 +83,46 @@ def listar_trabajadores(request):
 
 @login_required
 def actualizar_trabajador(request, trabajador_id):
-    trabajador = Trabajador.objects.get(id=trabajador_id)
+    try:
+        trabajador = Trabajador.objects.get(id=trabajador_id)
+    except Trabajador.DoesNotExist:
+        return redirect('trabajadores')  # Redirige si el trabajador no existe
 
     if request.method == "POST":
-        # Crear formularios con los datos del POST y la instancia del trabajador
+        # Usar la instancia del trabajador para editar
         form_info = TrabajadorUpdateForm(request.POST, instance=trabajador)
         form_detalles = TrabajadorDetallesForm(request.POST, instance=trabajador)
 
-        # Procesar primero el formulario de información básica
+        # Validar y guardar el formulario de información básica
         if form_info.is_valid():
             form_info.save()
-            # Si el formulario de información básica es válido, guardamos los cambios de este formulario
-            form_info_saved = True
         else:
             form_info_saved = False
             print("Errores en form_info:", form_info.errors)
 
-        # Procesar el formulario de detalles
+        # Validar y guardar el formulario de detalles
         if form_detalles.is_valid():
             form_detalles.save()
-            # Si el formulario de detalles es válido, guardamos los cambios de este formulario
-            form_detalles_saved = True
         else:
             form_detalles_saved = False
             print("Errores en form_detalles:", form_detalles.errors)
 
-        # Si ambos formularios son válidos, redirigimos
-        if form_info_saved and form_detalles_saved:
-            return redirect('trabajadores')
+        # Redirigir solo si ambos formularios son válidos
+        if form_info.is_valid() and form_detalles.is_valid():
+            return redirect('trabajadores')  # Redirige al listado de trabajadores
 
     else:
-        # Si no es un POST, pre-cargar los formularios con la instancia del trabajador
         form_info = TrabajadorUpdateForm(instance=trabajador)
         form_detalles = TrabajadorDetallesForm(instance=trabajador)
 
     context = {
         'form_info': form_info,
-        'form_detalles': form_detalles
+        'form_detalles': form_detalles,
+        'trabajador_id': trabajador_id,  # Pasar el ID de trabajador al template
     }
 
     return render(request, 'actualizar_trabajador.html', context)
+
 
 @login_required
 def eliminar_cuenta(request, trabajador_id):

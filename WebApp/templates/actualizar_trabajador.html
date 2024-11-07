@@ -57,7 +57,13 @@
         
             <!-- Botón de Guardar Cambios -->
             <div class="d-flex justify-content-between mt-4">
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <button type="submit" class="btn btn-primary">
+                    {% if trabajador_id %}
+                        Actualizar Trabajador
+                    {% else %}
+                        Agregar Información
+                    {% endif %}
+                </button>
                 <a href="{% url 'trabajadores' %}" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
