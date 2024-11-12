@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorUpdateForm, ContactoEmergenciaForm, CargaFamiliarForm, TrabajadorDetallesForm
+from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorUpdateForm, ContactoEmergenciaForm, CargaFamiliarForm, TrabajadorUpdateFormAdmin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Trabajador, Cargo, Area, Departamento, CargaFamiliar, ContactoEmergencia
@@ -8,6 +8,7 @@ from django.http import Http404, JsonResponse
 
 def inicio(request):
     return render(request, 'index.html')
+
 
 def registro_trabajador(request):
     if request.method == 'POST':
@@ -26,7 +27,7 @@ def registro_trabajador(request):
     context = {
         'trabajador_form': trabajador_form
     }
-    return render(request, 'registro.html', context)
+    return render(request, 'trabajador/registro.html', context)
 
 
 def login_trabajador(request):
@@ -43,10 +44,12 @@ def login_trabajador(request):
         form = TrabajadorLoginForm()
     return render(request, 'login.html', {'form': form})
 
+
 @login_required
 def logout_trabajador(request):
     logout(request)
     return redirect('login')  # Redirigir al formulario de inicio de sesión
+
 
 @login_required
 def listar_trabajadores(request):
@@ -79,49 +82,28 @@ def listar_trabajadores(request):
         'selected_area': area_id,
         'selected_departamento': departamento_id,
     }
-    return render(request, 'trabajadores.html', context)
+    return render(request, 'admin/trabajadores.html', context)
+
 
 @login_required
-def actualizar_trabajador(request, trabajador_id):
-    try:
-        trabajador = Trabajador.objects.get(id=trabajador_id)
-    except Trabajador.DoesNotExist:
-        return redirect('trabajadores')  # Redirige si el trabajador no existe
+def ver_trabajador(request, trabajador_id):
+    trabajador = get_object_or_404(Trabajador, id=trabajador_id)
+    return render(request, 'admin/ver_trabajador.html', {'trabajador': trabajador})
 
-    if request.method == "POST":
-        # Usar la instancia del trabajador para editar
-        form_info = TrabajadorUpdateForm(request.POST, instance=trabajador)
-        form_detalles = TrabajadorDetallesForm(request.POST, instance=trabajador)
 
-        # Validar y guardar el formulario de información básica
-        if form_info.is_valid():
-            form_info.save()
-        else:
-            form_info_saved = False
-            print("Errores en form_info:", form_info.errors)
-
-        # Validar y guardar el formulario de detalles
-        if form_detalles.is_valid():
-            form_detalles.save()
-        else:
-            form_detalles_saved = False
-            print("Errores en form_detalles:", form_detalles.errors)
-
-        # Redirigir solo si ambos formularios son válidos
-        if form_info.is_valid() and form_detalles.is_valid():
-            return redirect('trabajadores')  # Redirige al listado de trabajadores
-
+@login_required
+def actualizar_datos_trabajador(request, trabajador_id):
+    trabajador = get_object_or_404(Trabajador, id=trabajador_id)
+    if request.method == 'POST':
+        form = TrabajadorUpdateFormAdmin(request.POST, instance=trabajador)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Los datos personales han sido actualizados con éxito.')
+            return redirect('ver_trabajador', trabajador_id=trabajador_id)
     else:
-        form_info = TrabajadorUpdateForm(instance=trabajador)
-        form_detalles = TrabajadorDetallesForm(instance=trabajador)
-
-    context = {
-        'form_info': form_info,
-        'form_detalles': form_detalles,
-        'trabajador_id': trabajador_id,  # Pasar el ID de trabajador al template
-    }
-
-    return render(request, 'actualizar_trabajador.html', context)
+        form = TrabajadorUpdateFormAdmin(instance=trabajador)
+    
+    return render(request, 'admin/actualizar_datos_trabajador.html', {'form': form, 'trabajador': trabajador})
 
 
 @login_required
@@ -139,17 +121,20 @@ def eliminar_cuenta(request, trabajador_id):
         messages.error(request, "No tienes permisos para eliminar esta cuenta.")
         return redirect('inicio')  # O redirigir a la página que prefieras
 
+
 def cargar_areas(request):
     departamento_id = request.GET.get('departamento_id')
     areas = Area.objects.filter(departamento_id=departamento_id)
     areas_data = [{'id': area.id, 'nombre': area.nombre} for area in areas]
     return JsonResponse(areas_data, safe=False)
 
+
 def cargar_cargos(request):
     area_id = request.GET.get('area_id')
     cargos = Cargo.objects.filter(area_id=area_id)
     cargos_data = [{'id': cargo.id, 'nombre': cargo.nombre} for cargo in cargos]
     return JsonResponse(cargos_data, safe=False)
+
 
 @login_required
 def mi_cuenta(request):
@@ -170,11 +155,12 @@ def mi_cuenta(request):
             if contacto_form.is_valid():
                 contacto_form.save(trabajador=trabajador)  # Pasamos el trabajador al formulario
 
-    return render(request, 'mi_cuenta.html', {
+    return render(request, 'trabajador/mi_cuenta.html', {
         'trabajador': trabajador, 
         'carga_form': carga_form,
         'contacto_form': contacto_form
     })
+
 
 @login_required
 def editar_carga_familiar(request, carga_id=None):
@@ -197,7 +183,8 @@ def editar_carga_familiar(request, carga_id=None):
     else:
         form = CargaFamiliarForm(instance=carga)
 
-    return render(request, 'editar_carga_familiar.html', {'form': form})
+    return render(request, 'trabajador/editar_carga_familiar.html', {'form': form})
+
 
 @login_required
 def agregar_carga_familiar(request):
@@ -213,7 +200,8 @@ def agregar_carga_familiar(request):
     else:
         form = CargaFamiliarForm()
     
-    return render(request, 'agregar_carga_familiar.html', {'form': form})
+    return render(request, 'trabajador/agregar_carga_familiar.html', {'form': form})
+
 
 @login_required
 def agregar_contacto_emergencia(request):
@@ -235,7 +223,8 @@ def agregar_contacto_emergencia(request):
     else:
         form = ContactoEmergenciaForm()  # Formulario vacío para la vista GET
     
-    return render(request, 'agregar_contacto_emergencia.html', {'form': form})
+    return render(request, 'trabajador/agregar_contacto_emergencia.html', {'form': form})
+
 
 @login_required
 def editar_contacto_emergencia(request, contacto_id):
@@ -250,4 +239,4 @@ def editar_contacto_emergencia(request, contacto_id):
     else:
         form = ContactoEmergenciaForm(instance=contacto)
     
-    return render(request, 'editar_contacto_emergencia.html', {'form': form, 'contacto': contacto})
+    return render(request, 'trabajador/editar_contacto_emergencia.html', {'form': form, 'contacto': contacto})

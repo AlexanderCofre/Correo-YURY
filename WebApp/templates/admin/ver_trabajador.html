@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalles del Trabajador{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Detalles del Trabajador</h2>
+    
+    <div class="row">
+        <!-- Información Personal -->
+        <div class="col-md-6">
+            <div class="card p-4 mb-4">
+                <h5 class="card-title">Información Personal</h5>
+                <p><strong>Nombre:</strong> {{ trabajador.first_name }} {{ trabajador.last_name }}</p>
+                <p><strong>RUT:</strong> {{ trabajador.RUT }}</p>
+                <p><strong>Sexo:</strong> {{ trabajador.sexo }}</p>
+                <p><strong>Correo Electrónico:</strong> {{ trabajador.email }}</p>
+                
+                <!-- Botón para editar información personal -->
+                <a href="{% url 'actualizar_datos_trabajador' trabajador_id=trabajador.id %}" class="btn btn-primary mt-3">Editar Información Personal</a>
+            </div>
+        </div>
+
+        <!-- Información de Empleo -->
+        <div class="col-md-6">
+            <div class="card p-4 mb-4">
+                <h5 class="card-title">Información de Empleo</h5>
+                <p><strong>Fecha de Ingreso:</strong> {{ trabajador.fecha_ingreso|default:"No registrado" }}</p>
+                <p><strong>Departamento:</strong> {{ trabajador.departamento.nombre|default:"No registrado" }}</p>
+                <p><strong>Área:</strong> {{ trabajador.area.nombre|default:"No registrado" }}</p>
+                <p><strong>Cargo:</strong> {{ trabajador.cargo.nombre|default:"No registrado" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección para Carga Familiar y Contacto de Emergencia -->
+    <div class="row">
+        <!-- Información de Carga Familiar -->
+        <div class="col-md-6">
+            <div class="card p-4 mb-4">
+                <h5 class="card-title">Carga Familiar</h5>
+                
+                {% if trabajador.cargas_familiares.exists %}
+                    {% for carga in trabajador.cargas_familiares.all %}
+                        <p><strong>Nombre de la Carga Familiar:</strong> {{ carga.nombre_carga }}</p>
+                        <p><strong>Parentesco:</strong> {{ carga.parentesco }}</p>
+                        <p><strong>Sexo:</strong> {{ carga.get_sexo_display }}</p>
+                        <p><strong>RUT:</strong> {{ carga.rut }}</p>
+                        <hr>
+        
+                        <!-- Botón para editar carga familiar -->
+                        <a href="{% url 'editar_carga_familiar' carga_id=carga.id %}" class="btn btn-primary mt-3">Editar Carga Familiar</a>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay cargas familiares registradas.</p>
+                    <a href="{% url 'agregar_carga_familiar' %}" class="btn btn-primary mt-3">Agregar Carga Familiar</a>
+                {% endif %}
+            </div>
+        </div>        
+
+        <!-- Información de Contacto de Emergencia -->
+        <div class="col-md-6">
+            <div class="card p-4 mb-4">
+                <h5 class="card-title">Contacto de Emergencia</h5>
+                
+                {% if trabajador.contactos_emergencia.exists %}
+                    {% for contacto in trabajador.contactos_emergencia.all %}
+                        <p><strong>Nombre del Contacto:</strong> {{ contacto.nombre_contacto }}</p>
+                        <p><strong>Apellido del Contacto:</strong> {{ contacto.apellido_contacto }}</p>
+                        <p><strong>Relación con el Trabajador:</strong> {{ contacto.relacion }}</p>
+                        <p><strong>Teléfono de Contacto:</strong> {{ contacto.telefono_contacto }}</p>
+                        <hr>
+        
+                        <!-- Botón para editar contacto de emergencia -->
+                        <a href="{% url 'editar_contacto_emergencia' contacto_id=contacto.id %}" class="btn btn-primary mt-3">Editar Contacto de Emergencia</a>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay contactos de emergencia registrados.</p>
+                    <a href="{% url 'agregar_contacto_emergencia' %}" class="btn btn-primary mt-3">Agregar Contacto de Emergencia</a>
+                {% endif %}
+            </div>
+        </div>        
+    </div>
+
+</div>
+{% endblock %}

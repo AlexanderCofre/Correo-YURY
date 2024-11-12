@@ -93,9 +93,9 @@
                         <p class="card-text"><strong>Departamento:</strong></p>
                         <p>{{ trabajador.area.departamento.nombre }}</p>
                         <div class="d-flex justify-content-center align-items-center">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">Ver</button>
-                                <a href="{% url 'actualizar_trabajador' trabajador.id %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                            <!-- En el template de lista de trabajadores -->
+                            <div class="d-flex justify-content-center align-items-center">
+                                <a href="{% url 'ver_trabajador' trabajador.id %}" class="btn btn-sm btn-outline-secondary">Ver</a>
                             </div>
                         </div>
                     </div>
