@@ -143,64 +143,54 @@ class TrabajadorDetallesForm(forms.ModelForm):
 class TrabajadorDetallesFormAdmin(forms.ModelForm):
     class Meta:
         model = Trabajador
-        fields = ['departamento', 'area', 'cargo']  # No incluir 'fecha_ingreso'
-
+        fields = ['departamento', 'area', 'cargo']
+        
         widgets = {
-                'cargo': forms.Select(attrs={'class': 'form-control'}),
-                'area': forms.Select(attrs={'class': 'form-control'}),
-                'departamento': forms.Select(attrs={'class': 'form-control'}),
-            }
+            'departamento': forms.Select(
+                attrs={'class': 'form-control', 'required': 'required'}
+            ),
+            'area': forms.Select(
+                attrs={'class': 'form-control', 'required': 'required'}
+            ),
+            'cargo': forms.Select(
+                attrs={'class': 'form-control', 'required': 'required'}
+            ),
+        }
 
-    # Validación para verificar que se seleccione un departamento antes de un área o cargo
     def clean(self):
         cleaned_data = super().clean()
         departamento = cleaned_data.get("departamento")
         area = cleaned_data.get("area")
         cargo = cleaned_data.get("cargo")
 
-        if area and not departamento:
-            raise ValidationError("Seleccione un departamento antes de elegir un área.")
-        if cargo and not area:
-            raise ValidationError("Seleccione un área antes de elegir un cargo.")
+        if area and departamento and area.departamento != departamento:
+            raise ValidationError({
+                'area': 'El área seleccionada no pertenece al departamento elegido.'
+            })
+            
+        if cargo and area and cargo.area != area:
+            raise ValidationError({
+                'cargo': 'El cargo seleccionado no pertenece al área elegida.'
+            })
+
         return cleaned_data
-    
-    def clean_departamento(self):
-        departamento = self.cleaned_data.get('departamento')
-        if not departamento:
-            raise ValidationError('Este campo es obligatorio.')
-        return departamento
 
-    def clean_area(self):
-        area = self.cleaned_data.get('area')
-        if not area:
-            raise ValidationError('Este campo es obligatorio.')
-        return area
-
-    def clean_cargo(self):
-        cargo = self.cleaned_data.get('cargo')
-        if not cargo:
-            raise ValidationError('Este campo es obligatorio.')
-        return cargo
-    
-    # Métodos para cargar áreas y cargos dinámicamente
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Si se está editando un trabajador con un departamento asignado, filtrar áreas
-        # Si se está editando un trabajador con un departamento asignado, filtrar áreas
+        # Inicializar querysets
         if self.instance.pk:
             if self.instance.departamento:
-                self.fields['area'].queryset = Area.objects.filter(departamento_id=self.instance.departamento.id)
+                self.fields['area'].queryset = Area.objects.filter(
+                    departamento=self.instance.departamento
+                )
             if self.instance.area:
-                self.fields['cargo'].queryset = Cargo.objects.filter(area_id=self.instance.area.id)
-        # Si estamos recibiendo datos del formulario (POST), filtramos área y cargo
-        elif 'departamento' in self.data:
-            departamento_id = self.data.get('departamento')
-            self.fields['area'].queryset = Area.objects.filter(departamento_id=departamento_id)
-
-        if 'area' in self.data:
-            area_id = self.data.get('area')
-            self.fields['cargo'].queryset = Cargo.objects.filter(area_id=area_id)
+                self.fields['cargo'].queryset = Cargo.objects.filter(
+                    area=self.instance.area
+                )
+        else:
+            self.fields['area'].queryset = Area.objects.none()
+            self.fields['cargo'].queryset = Cargo.objects.none()
 
 
 class TrabajadorLoginForm(AuthenticationForm):

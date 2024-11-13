@@ -1,40 +1,57 @@
 {% extends 'base.html' %}
-{% load form_filters %}
-
 {% block title %}Editar Información de Empleo{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <div class="card p-4">
-        <h2 class="card-title">Editar Información de Empleo</h2>
-        <form method="POST">
-            {% csrf_token %}
+    <h2 class="mb-4">Editar Información de Empleo</h2>
+    <form method="POST" class="card p-4 mb-4">
+        {% csrf_token %}
 
-            <!-- Campo Departamento -->
-            <div class="form-group mt-3">
-                <label for="id_departamento">Departamento:</label>
-                {{ form.departamento|add_class:"form-control" }}
-            </div>
+        <!-- Campo Fecha de Ingreso -->
+        <div class="form-group mt-3">
+            <label for="fecha_ingreso" class="form-label"><i class="fas fa-calendar-alt"></i> Fecha de Ingreso:</label>
+            <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" 
+                   value="{{ trabajador.fecha_ingreso|date:'Y-m-d' }}">
+        </div>
+        
+        <!-- Campo Departamento -->
+        <div class="form-group mt-3">
+            <label for="departamento" class="form-label"><i class="fas fa-building"></i> Departamento:</label>
+            <select id="departamento" name="departamento" class="form-control">
+                <option value="">Seleccione un departamento</option>
+                {% for depto in departamentos %}
+                    <option value="{{ depto.id }}" 
+                            {% if depto.id == trabajador.departamento_id %}selected{% endif %}>
+                        {{ depto.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
-            <!-- Campo Área -->
-            <div class="form-group mt-3">
-                <label for="id_area">Área:</label>
-                {{ form.area|add_class:"form-control" }}
-            </div>
+        <!-- Campo Área -->
+        <div class="form-group mt-3">
+            <label for="area" class="form-label"><i class="fas fa-sitemap"></i> Área:</label>
+            <select id="area" name="area" class="form-control">
+                <option value="">Seleccione una área</option>
+            </select>
+        </div>
 
-            <!-- Campo Cargo -->
-            <div class="form-group mt-3">
-                <label for="id_cargo">Cargo:</label>
-                {{ form.cargo|add_class:"form-control" }}
-            </div>
+        <!-- Campo Cargo -->
+        <div class="form-group mt-3">
+            <label for="cargo" class="form-label"><i class="fas fa-user-tie"></i> Cargo:</label>
+            <select id="cargo" name="cargo" class="form-control">
+                <option value="">Seleccione un cargo</option>
+            </select>
+        </div>
 
-            <!-- Botones -->
-            <div class="d-flex justify-content-between mt-3">
-                <button type="submit" class="btn btn-success">Guardar Cambios</button>
-                <a href="{% url 'ver_trabajador' trabajador.id %}" class="btn btn-secondary">Cancelar</a>
-            </div>
-        </form>
-    </div>
+        <!-- Botones -->
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar Cambios</button>
+            <a href="{% url 'ver_trabajador' trabajador.id %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
 </div>
 
 <script>
@@ -43,58 +60,70 @@
         const areasData = {{ areas_json|safe }};
         const cargosData = {{ cargos_json|safe }};
 
-        const departamentoSelect = document.getElementById("id_departamento");
-        const areaSelect = document.getElementById("id_area");
-        const cargoSelect = document.getElementById("id_cargo");
+        const departamentoSelect = document.getElementById("departamento");
+        const areaSelect = document.getElementById("area");
+        const cargoSelect = document.getElementById("cargo");
 
-        // Pre-select current area and cargo based on trabajador
-        const selectedDepartamento = {{ trabajador.departamento_id|default:"null" }};
-        const selectedArea = {{ trabajador.area_id|default:"null" }};
-        const selectedCargo = {{ trabajador.cargo_id|default:"null" }};
-
-        function populateOptions(select, options, selectedOption = null) {
-            select.innerHTML = '';
-            options.forEach(option => {
-                const opt = document.createElement("option");
-                opt.value = option.id;
-                opt.textContent = option.nombre;
-                if (selectedOption && selectedOption === option.id) {
-                    opt.selected = true;
+        function populateAreas(departamentoId, selectedAreaId = null) {
+            areaSelect.innerHTML = '<option value="">Seleccione un área</option>';
+            const filteredAreas = areasData.filter(area => area.departamento_id === parseInt(departamentoId));
+            
+            filteredAreas.forEach(area => {
+                const option = document.createElement("option");
+                option.value = area.id;
+                option.textContent = area.nombre;
+                if (selectedAreaId && area.id === parseInt(selectedAreaId)) {
+                    option.selected = true;
                 }
-                select.appendChild(opt);
+                areaSelect.appendChild(option);
             });
-        }
-
-        departamentoSelect.addEventListener("change", function () {
-            const departamentoId = parseInt(this.value);
-            const filteredAreas = areasData.filter(area => area.departamento_id === departamentoId);
-            populateOptions(areaSelect, filteredAreas);
 
             areaSelect.disabled = filteredAreas.length === 0;
-            cargoSelect.disabled = true;
+        }
+
+        function populateCargos(areaId, selectedCargoId = null) {
             cargoSelect.innerHTML = '<option value="">Seleccione un cargo</option>';
+            const filteredCargos = cargosData.filter(cargo => cargo.area_id === parseInt(areaId));
+            
+            filteredCargos.forEach(cargo => {
+                const option = document.createElement("option");
+                option.value = cargo.id;
+                option.textContent = cargo.nombre;
+                if (selectedCargoId && cargo.id === parseInt(selectedCargoId)) {
+                    option.selected = true;
+                }
+                cargoSelect.appendChild(option);
+            });
+
+            cargoSelect.disabled = filteredCargos.length === 0;
+        }
+
+        // Event Listeners
+        departamentoSelect.addEventListener("change", function () {
+            const departamentoId = parseInt(this.value);
+            populateAreas(departamentoId);
+            cargoSelect.innerHTML = '<option value="">Seleccione un cargo</option>';
+            cargoSelect.disabled = true;
         });
 
         areaSelect.addEventListener("change", function () {
             const areaId = parseInt(this.value);
-            const filteredCargos = cargosData.filter(cargo => cargo.area_id === areaId);
-            populateOptions(cargoSelect, filteredCargos);
-
-            cargoSelect.disabled = filteredCargos.length === 0;
+            populateCargos(areaId);
         });
 
-        // Initialize with current values
-        if (selectedDepartamento) {
-            departamentoSelect.value = selectedDepartamento;
-            const filteredAreas = areasData.filter(area => area.departamento_id === selectedDepartamento);
-            populateOptions(areaSelect, filteredAreas, selectedArea);
-            areaSelect.disabled = filteredAreas.length === 0;
+        // Inicializar valores si existen
+        if (departamentoSelect.value) {
+            populateAreas(
+                parseInt(departamentoSelect.value), 
+                {{ trabajador.area_id|default:"null"|safe }}
+            );
         }
 
-        if (selectedArea) {
-            const filteredCargos = cargosData.filter(cargo => cargo.area_id === selectedArea);
-            populateOptions(cargoSelect, filteredCargos, selectedCargo);
-            cargoSelect.disabled = filteredCargos.length === 0;
+        if ({{ trabajador.area_id|default:"null"|safe }}) {
+            populateCargos(
+                {{ trabajador.area_id|default:"null"|safe }}, 
+                {{ trabajador.cargo_id|default:"null"|safe }}
+            );
         }
     });
 </script>

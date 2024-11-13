@@ -140,25 +140,32 @@ def actualizar_datos_trabajador(request, trabajador_id):
 @login_required
 def editar_informacion_empleo(request, trabajador_id):
     trabajador = get_object_or_404(Trabajador, id=trabajador_id)
-    
-    if request.method == 'POST':
-        form = TrabajadorDetallesFormAdmin(request.POST, instance=trabajador)
-        if form.is_valid():
-            form.save()
-            return redirect('ver_trabajador', trabajador_id=trabajador.id)
-    else:
-        form = TrabajadorDetallesFormAdmin(instance=trabajador)
-    
     departamentos = Departamento.objects.all()
     areas = Area.objects.all()
     cargos = Cargo.objects.all()
 
+    if request.method == 'POST':
+        departamento_id = request.POST.get('departamento')
+        area_id = request.POST.get('area')
+        cargo_id = request.POST.get('cargo')
+        fecha_ingreso = request.POST.get('fecha_ingreso')
+
+        # Actualizar los campos
+        trabajador.departamento_id = departamento_id
+        trabajador.area_id = area_id
+        trabajador.cargo_id = cargo_id
+        trabajador.fecha_ingreso = fecha_ingreso
+        trabajador.save()
+        
+        messages.success(request, 'Información actualizada correctamente.')
+        return redirect('ver_trabajador', trabajador.id)
+
     return render(request, 'admin/actualizar_informacion_empleo.html', {
-        'form': form,
         'trabajador': trabajador,
+        'departamentos': departamentos,
         'departamentos_json': json.dumps(list(departamentos.values('id', 'nombre'))),
         'areas_json': json.dumps(list(areas.values('id', 'nombre', 'departamento_id'))),
-        'cargos_json': json.dumps(list(cargos.values('id', 'nombre', 'area_id')))
+        'cargos_json': json.dumps(list(cargos.values('id', 'nombre', 'area_id'))),
     })
 
 
