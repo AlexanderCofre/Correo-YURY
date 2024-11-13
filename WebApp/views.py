@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorUpdateForm, ContactoEmergenciaForm, CargaFamiliarForm, TrabajadorUpdateFormAdmin
+from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorDetallesForm, TrabajadorDetallesFormAdmin, ContactoEmergenciaForm, CargaFamiliarForm, TrabajadorUpdateFormAdmin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Trabajador, Cargo, Area, Departamento, CargaFamiliar, ContactoEmergencia
 from django.http import Http404, JsonResponse
+import json
 
 def inicio(request):
     return render(request, 'index.html')
@@ -92,6 +93,36 @@ def ver_trabajador(request, trabajador_id):
 
 
 @login_required
+def agregar_informacion_empleo(request, trabajador_id):
+    trabajador = get_object_or_404(Trabajador, id=trabajador_id)
+    departamentos = Departamento.objects.all()
+    areas = Area.objects.all()
+    cargos = Cargo.objects.all()
+
+    if request.method == 'POST':
+        departamento_id = request.POST.get('departamento')
+        area_id = request.POST.get('area')
+        cargo_id = request.POST.get('cargo')
+        fecha_ingreso = request.POST.get('fecha_ingreso')
+
+        trabajador.departamento_id = departamento_id
+        trabajador.area_id = area_id
+        trabajador.cargo_id = cargo_id
+        trabajador.fecha_ingreso = fecha_ingreso  # Asignar la fecha de ingreso
+        trabajador.save()
+        return redirect('ver_trabajador', trabajador.id)
+
+    return render(request, 'admin/agregar_informacion_empleo.html', {
+        'trabajador': trabajador,
+        'departamentos': departamentos,
+        'departamentos_json': json.dumps(list(departamentos.values('id', 'nombre'))),
+        'areas_json': json.dumps(list(areas.values('id', 'nombre', 'departamento_id'))),
+        'cargos_json': json.dumps(list(cargos.values('id', 'nombre', 'area_id'))),
+    })
+
+
+
+@login_required
 def actualizar_datos_trabajador(request, trabajador_id):
     trabajador = get_object_or_404(Trabajador, id=trabajador_id)
     if request.method == 'POST':
@@ -104,6 +135,31 @@ def actualizar_datos_trabajador(request, trabajador_id):
         form = TrabajadorUpdateFormAdmin(instance=trabajador)
     
     return render(request, 'admin/actualizar_datos_trabajador.html', {'form': form, 'trabajador': trabajador})
+
+
+@login_required
+def editar_informacion_empleo(request, trabajador_id):
+    trabajador = get_object_or_404(Trabajador, id=trabajador_id)
+    
+    if request.method == 'POST':
+        form = TrabajadorDetallesFormAdmin(request.POST, instance=trabajador)
+        if form.is_valid():
+            form.save()
+            return redirect('ver_trabajador', trabajador_id=trabajador.id)
+    else:
+        form = TrabajadorDetallesFormAdmin(instance=trabajador)
+    
+    departamentos = Departamento.objects.all()
+    areas = Area.objects.all()
+    cargos = Cargo.objects.all()
+
+    return render(request, 'admin/actualizar_informacion_empleo.html', {
+        'form': form,
+        'trabajador': trabajador,
+        'departamentos_json': json.dumps(list(departamentos.values('id', 'nombre'))),
+        'areas_json': json.dumps(list(areas.values('id', 'nombre', 'departamento_id'))),
+        'cargos_json': json.dumps(list(cargos.values('id', 'nombre', 'area_id')))
+    })
 
 
 @login_required

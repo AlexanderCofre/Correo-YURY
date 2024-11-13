@@ -25,10 +25,20 @@
         <div class="col-md-6">
             <div class="card p-4 mb-4">
                 <h5 class="card-title">Información de Empleo</h5>
+                
                 <p><strong>Fecha de Ingreso:</strong> {{ trabajador.fecha_ingreso|default:"No registrado" }}</p>
                 <p><strong>Departamento:</strong> {{ trabajador.departamento.nombre|default:"No registrado" }}</p>
                 <p><strong>Área:</strong> {{ trabajador.area.nombre|default:"No registrado" }}</p>
                 <p><strong>Cargo:</strong> {{ trabajador.cargo.nombre|default:"No registrado" }}</p>
+                
+                <!-- Mostrar botón de agregar o editar según la existencia de datos -->
+                {% if trabajador.fecha_ingreso and trabajador.departamento and trabajador.area and trabajador.cargo %}
+                    <!-- Botón para editar información de empleo -->
+                    <a href="{% url 'editar_informacion_empleo' trabajador.id %}" class="btn btn-primary mt-3">Editar Información de Empleo</a>
+                {% else %}
+                    <!-- Botón para agregar información de empleo -->
+                    <a href="{% url 'agregar_informacion_empleo' trabajador.id %}" class="btn btn-primary mt-3">Agregar Información de Empleo</a>
+                {% endif %}
             </div>
         </div>
     </div>

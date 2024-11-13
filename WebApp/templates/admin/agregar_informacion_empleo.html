@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Agregar Información de Empleo{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Agregar Información de Empleo</h2>
+    <form method="POST" class="card p-4 mb-4">
+        {% csrf_token %}
+
+        <!-- Campo Fecha de Ingreso -->
+        <div class="form-group mt-3">
+            <label for="fecha_ingreso" class="form-label"><i class="fas fa-calendar-alt"></i> Fecha de Ingreso:</label>
+            <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" value="{{ trabajador.fecha_ingreso|date:"Y-m-d" }}">
+        </div>
+        
+        <!-- Campo Departamento -->
+        <div class="form-group mt-3">
+            <label for="departamento" class="form-label"><i class="fas fa-building"></i> Departamento:</label>
+            <select id="departamento" name="departamento" class="form-control">
+                <option value="">Seleccione un departamento</option>
+                {% for depto in departamentos %}
+                    <option value="{{ depto.id }}">{{ depto.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Campo Área -->
+        <div class="form-group mt-3">
+            <label for="area" class="form-label"><i class="fas fa-sitemap"></i> Área:</label>
+            <select id="area" name="area" class="form-control" disabled>
+                <option value="">Seleccione una área</option>
+            </select>
+        </div>
+
+        <!-- Campo Cargo -->
+        <div class="form-group mt-3">
+            <label for="cargo" class="form-label"><i class="fas fa-user-tie"></i> Cargo:</label>
+            <select id="cargo" name="cargo" class="form-control" disabled>
+                <option value="">Seleccione un cargo</option>
+            </select>
+        </div>
+
+        <!-- Botones con margen superior -->
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar</button>
+            <a href="{% url 'ver_trabajador' trabajador.id %}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const departamentosData = {{ departamentos_json|safe }};
+        const areasData = {{ areas_json|safe }};
+        const cargosData = {{ cargos_json|safe }};
+
+        const departamentoSelect = document.getElementById("departamento");
+        const areaSelect = document.getElementById("area");
+        const cargoSelect = document.getElementById("cargo");
+
+        departamentoSelect.addEventListener("change", function () {
+            const departamentoId = parseInt(this.value);
+            areaSelect.innerHTML = '<option value="">Seleccione un área</option>';
+            cargoSelect.innerHTML = '<option value="">Seleccione un cargo</option>';
+            cargoSelect.disabled = true;
+
+            const filteredAreas = areasData.filter(area => area.departamento_id === departamentoId);
+            filteredAreas.forEach(area => {
+                const option = document.createElement("option");
+                option.value = area.id;
+                option.textContent = area.nombre;
+                areaSelect.appendChild(option);
+            });
+
+            areaSelect.disabled = filteredAreas.length === 0;
+        });
+
+        areaSelect.addEventListener("change", function () {
+            const areaId = parseInt(this.value);
+            cargoSelect.innerHTML = '<option value="">Seleccione un cargo</option>';
+
+            const filteredCargos = cargosData.filter(cargo => cargo.area_id === areaId);
+            filteredCargos.forEach(cargo => {
+                const option = document.createElement("option");
+                option.value = cargo.id;
+                option.textContent = cargo.nombre;
+                cargoSelect.appendChild(option);
+            });
+
+            cargoSelect.disabled = filteredCargos.length === 0;
+        });
+    });
+</script>
+{% endblock %}
