@@ -59,11 +59,11 @@
                         <hr>
         
                         <!-- Botón para editar carga familiar -->
-                        <a href="{% url 'editar_carga_familiar' carga_id=carga.id %}" class="btn btn-primary mt-3">Editar Carga Familiar</a>
+                        <a href="{% url 'editar_carga_familiar_admin' trabajador_id=trabajador.id carga_id=carga.id %}" class="btn btn-primary mt-3">Editar Carga Familiar</a>
                     {% endfor %}
                 {% else %}
                     <p>No hay cargas familiares registradas.</p>
-                    <a href="{% url 'agregar_carga_familiar' %}" class="btn btn-primary mt-3">Agregar Carga Familiar</a>
+                    <a href="{% url 'agregar_carga_familiar_admin' trabajador_id=trabajador.id %}" class="btn btn-primary mt-3">Agregar Carga Familiar</a>
                 {% endif %}
             </div>
         </div>        
@@ -82,11 +82,11 @@
                         <hr>
         
                         <!-- Botón para editar contacto de emergencia -->
-                        <a href="{% url 'editar_contacto_emergencia' contacto_id=contacto.id %}" class="btn btn-primary mt-3">Editar Contacto de Emergencia</a>
+                        <a href="{% url 'editar_contacto_emergencia_admin' trabajador_id=trabajador.id contacto_id=contacto.id %}" class="btn btn-primary mt-3">Editar Contacto de Emergencia</a>
                     {% endfor %}
                 {% else %}
                     <p>No hay contactos de emergencia registrados.</p>
-                    <a href="{% url 'agregar_contacto_emergencia' %}" class="btn btn-primary mt-3">Agregar Contacto de Emergencia</a>
+                    <a href="{% url 'agregar_contacto_emergencia_admin' trabajador_id=trabajador.id %}" class="btn btn-primary mt-3">Agregar Contacto de Emergencia</a>
                 {% endif %}
             </div>
         </div>        

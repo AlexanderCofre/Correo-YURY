@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Editar Carga Familiar{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Editar Carga Familiar</h2>
+    <form method="POST" class="card p-4 mb-4">
+        {% csrf_token %}
+        
+        <!-- Nombre de la Carga -->
+        <div class="form-group mt-3">
+            <label for="nombre_carga" class="form-label">
+                <i class="fas fa-user"></i> Nombre Completo:
+            </label>
+            <input type="text" 
+                   id="nombre_carga" 
+                   name="nombre_carga" 
+                   class="form-control" 
+                   value="{{ carga.nombre_carga }}"
+                   required>
+        </div>
+
+        <!-- RUT -->
+        <div class="form-group mt-3">
+            <label for="rut" class="form-label">
+                <i class="fas fa-id-card"></i> RUT:
+            </label>
+            <input type="text" 
+                   id="rut" 
+                   name="rut" 
+                   class="form-control" 
+                   value="{{ carga.rut }}"
+                   required>
+        </div>
+
+        <!-- Parentesco -->
+        <div class="form-group mt-3">
+            <label for="parentesco" class="form-label">
+                <i class="fas fa-users"></i> Parentesco:
+            </label>
+            <select id="parentesco" name="parentesco" class="form-control" required>
+                <option value="">Seleccione un parentesco</option>
+                <option value="Cónyuge" {% if carga.parentesco == "Cónyuge" %}selected{% endif %}>Cónyuge</option>
+                <option value="Hijo/a" {% if carga.parentesco == "Hijo/a" %}selected{% endif %}>Hijo/a</option>
+                <option value="Padre" {% if carga.parentesco == "Padre" %}selected{% endif %}>Padre</option>
+                <option value="Madre" {% if carga.parentesco == "Madre" %}selected{% endif %}>Madre</option>
+                <option value="Hermano/a" {% if carga.parentesco == "Hermano/a" %}selected{% endif %}>Hermano/a</option>
+                <option value="Otro" {% if carga.parentesco == "Otro" %}selected{% endif %}>Otro</option>
+            </select>
+        </div>
+
+        <!-- Sexo -->
+        <div class="form-group mt-3">
+            <label class="form-label">
+                <i class="fas fa-venus-mars"></i> Sexo:
+            </label>
+            <div class="d-flex">
+                <div class="form-check me-4">
+                    <input class="form-check-input" 
+                           type="radio" 
+                           name="sexo" 
+                           id="sexoM" 
+                           value="M" 
+                           {% if carga.sexo == "M" %}checked{% endif %}
+                           required>
+                    <label class="form-check-label" for="sexoM">
+                        Masculino
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" 
+                           type="radio" 
+                           name="sexo" 
+                           id="sexoF" 
+                           value="F" 
+                           {% if carga.sexo == "F" %}checked{% endif %}
+                           required>
+                    <label class="form-check-label" for="sexoF">
+                        Femenino
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+            <a href="{% url 'ver_trabajador' trabajador.id %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Script para formatear el RUT mientras se escribe
+    document.getElementById('rut').addEventListener('input', function(e) {
+        let rut = e.target.value.replace(/[^0-9kK-]/g, '');
+        
+        if(rut.length > 1) {
+            let cuerpo = rut.slice(0, -1);
+            let dv = rut.slice(-1).toUpperCase();
+            cuerpo = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            rut = cuerpo + '-' + dv;
+        }
+        
+        e.target.value = rut;
+    });
+</script>
+{% endblock %}

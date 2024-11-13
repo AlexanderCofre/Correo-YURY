@@ -1,7 +1,7 @@
 import datetime
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Trabajador, Cargo, Area, Departamento, ContactoEmergencia, CargaFamiliar
+from .models import Trabajador, Cargo, Area, ContactoEmergencia, CargaFamiliar
 from django.core.exceptions import ValidationError
 import re
 

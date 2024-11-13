@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, TrabajadorDetallesForm, TrabajadorDetallesFormAdmin, ContactoEmergenciaForm, CargaFamiliarForm, TrabajadorUpdateFormAdmin
+from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, ContactoEmergenciaForm, CargaFamiliarForm, TrabajadorUpdateFormAdmin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Trabajador, Cargo, Area, Departamento, CargaFamiliar, ContactoEmergencia
 from django.http import Http404, JsonResponse
 import json
+
 
 def inicio(request):
     return render(request, 'index.html')
@@ -166,6 +167,153 @@ def editar_informacion_empleo(request, trabajador_id):
         'departamentos_json': json.dumps(list(departamentos.values('id', 'nombre'))),
         'areas_json': json.dumps(list(areas.values('id', 'nombre', 'departamento_id'))),
         'cargos_json': json.dumps(list(cargos.values('id', 'nombre', 'area_id'))),
+    })
+
+@login_required
+def agregar_carga_familiarAdmin(request, trabajador_id):
+    trabajador = get_object_or_404(Trabajador, id=trabajador_id)
+    
+    if request.method == 'POST':
+        nombre_carga = request.POST.get('nombre_carga')
+        parentesco = request.POST.get('parentesco')
+        sexo = request.POST.get('sexo')
+        rut = request.POST.get('rut')
+        
+        # Validaciones básicas
+        if not all([nombre_carga, parentesco, sexo, rut]):
+            messages.error(request, 'Todos los campos son obligatorios.')
+            return redirect('agregar_carga_familiar_admin', trabajador_id=trabajador.id)
+        
+        try:
+            # Crear la carga familiar
+            CargaFamiliar.objects.create(
+                trabajador=trabajador,
+                nombre_carga=nombre_carga,
+                parentesco=parentesco,
+                sexo=sexo,
+                rut=rut
+            )
+            
+            messages.success(request, 'Carga familiar agregada correctamente.')
+            return redirect('ver_trabajador', trabajador.id)
+            
+        except Exception as e:
+            messages.error(request, 'Error al agregar la carga familiar.')
+            return redirect('agregar_carga_familiar', trabajador_id=trabajador.id)
+    
+    return render(request, 'admin/agregar_carga_familiar_admin.html', {
+        'trabajador': trabajador,
+    })
+
+
+@login_required
+def editar_carga_familiarAdmin(request, trabajador_id, carga_id):
+    trabajador = get_object_or_404(Trabajador, id=trabajador_id)
+    carga = get_object_or_404(CargaFamiliar, id=carga_id, trabajador=trabajador)
+
+    if request.method == 'POST':
+        nombre_carga = request.POST.get('nombre_carga')
+        parentesco = request.POST.get('parentesco')
+        sexo = request.POST.get('sexo')
+        rut = request.POST.get('rut')
+
+        # Validaciones básicas
+        if not all([nombre_carga, parentesco, sexo, rut]):
+            messages.error(request, 'Todos los campos son obligatorios.')
+            return redirect('editar_carga_familiar_admin', trabajador_id=trabajador.id, carga_id=carga.id)
+
+        try:
+            # Actualizar la carga familiar
+            carga.nombre_carga = nombre_carga
+            carga.parentesco = parentesco
+            carga.sexo = sexo
+            carga.rut = rut
+            carga.save()
+
+            messages.success(request, 'Carga familiar actualizada correctamente.')
+            return redirect('ver_trabajador', trabajador.id)
+
+        except Exception as e:
+            messages.error(request, 'Error al actualizar la carga familiar.')
+            return redirect('editar_carga_familiar_admin', trabajador_id=trabajador.id, carga_id=carga.id)
+
+    return render(request, 'admin/editar_carga_familiar_admin.html', {
+        'trabajador': trabajador,
+        'carga': carga,
+    })
+
+
+@login_required
+def agregar_contacto_emergenciaAdmin(request, trabajador_id):
+    trabajador = get_object_or_404(Trabajador, id=trabajador_id)
+
+    if request.method == 'POST':
+        nombre_contacto = request.POST.get('nombre_contacto')
+        apellido_contacto = request.POST.get('apellido_contacto')
+        relacion = request.POST.get('relacion')
+        telefono_contacto = request.POST.get('telefono_contacto')
+
+        # Basic validation for required fields
+        if not all([nombre_contacto, apellido_contacto, relacion, telefono_contacto]):
+            messages.error(request, 'Todos los campos son obligatorios.')
+            return redirect('agregar_contacto_emergencia', trabajador_id=trabajador.id)
+
+        try:
+            # Create the emergency contact
+            ContactoEmergencia.objects.create(
+                trabajador=trabajador,
+                nombre_contacto=nombre_contacto,
+                apellido_contacto=apellido_contacto,
+                relacion=relacion,
+                telefono_contacto=telefono_contacto
+            )
+
+            messages.success(request, 'Contacto de emergencia agregado correctamente.')
+            return redirect('ver_trabajador', trabajador.id)
+
+        except Exception:
+            messages.error(request, 'Error al agregar el contacto de emergencia. \n')
+            return redirect('agregar_contacto_emergencia', trabajador_id=trabajador.id)
+
+    return render(request, 'admin/agregar_contacto_emergencia_admin.html', {
+        'trabajador': trabajador,
+    })
+
+
+@login_required
+def editar_contacto_emergenciaAdmin(request, trabajador_id, contacto_id):
+    trabajador = get_object_or_404(Trabajador, id=trabajador_id)
+    contacto = get_object_or_404(ContactoEmergencia, id=contacto_id, trabajador=trabajador)
+
+    if request.method == 'POST':
+        nombre_contacto = request.POST.get('nombre_contacto')
+        apellido_contacto = request.POST.get('apellido_contacto')
+        relacion = request.POST.get('relacion')
+        telefono_contacto = request.POST.get('telefono_contacto')
+
+        # Basic validation for required fields
+        if not all([nombre_contacto, apellido_contacto, relacion, telefono_contacto]):
+            messages.error(request, 'Todos los campos son obligatorios.')
+            return redirect('editar_contacto_emergencia', trabajador_id=trabajador.id, contacto_id=contacto.id)
+
+        try:
+            # Update the emergency contact
+            contacto.nombre_contacto = nombre_contacto
+            contacto.apellido_contacto = apellido_contacto
+            contacto.relacion = relacion
+            contacto.telefono_contacto = telefono_contacto
+            contacto.save()
+
+            messages.success(request, 'Contacto de emergencia actualizado correctamente.')
+            return redirect('ver_trabajador', trabajador.id)
+
+        except Exception as e:
+            messages.error(request, 'Error al actualizar el contacto de emergencia.')
+            return redirect('editar_contacto_emergencia', trabajador_id=trabajador.id, contacto_id=contacto.id)
+
+    return render(request, 'admin/editar_contacto_emergencia_admin.html', {
+        'trabajador': trabajador,
+        'contacto': contacto,
     })
 
 

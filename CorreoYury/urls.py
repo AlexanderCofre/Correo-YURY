@@ -24,11 +24,19 @@ urlpatterns = [
     path('register/', views.registro_trabajador, name='registro'),
     path('login/', views.login_trabajador, name='login'),
     path('logout/', views.logout_trabajador, name='logout'),
+
+    #Rutas del ADMINISTRADOR
     path('trabajadores/', views.listar_trabajadores, name='trabajadores'),
     path('trabajador/<int:trabajador_id>/', views.ver_trabajador, name='ver_trabajador'),
     path('trabajador/<int:trabajador_id>/actualizar/', views.actualizar_datos_trabajador, name='actualizar_datos_trabajador'),
     path('trabajador/<int:trabajador_id>/editar-informacion-empleo/', views.editar_informacion_empleo, name='editar_informacion_empleo'),
     path('trabajadores/<int:trabajador_id>/agregar_informacion_empleo/', views.agregar_informacion_empleo, name='agregar_informacion_empleo'),
+    path('trabajador/<int:trabajador_id>/agregar-carga-familiar/', views.agregar_carga_familiarAdmin, name='agregar_carga_familiar_admin'),
+    path('trabajador/<int:trabajador_id>/carga/<int:carga_id>/editar/', views.editar_carga_familiarAdmin, name='editar_carga_familiar_admin'),
+    path('trabajador/<int:trabajador_id>/agregar-contacto-emergencia/', views.agregar_contacto_emergenciaAdmin, name='agregar_contacto_emergencia_admin'),
+    path('trabajador/<int:trabajador_id>/contacto/<int:contacto_id>/editar/', views.editar_contacto_emergenciaAdmin, name='editar_contacto_emergencia_admin'),
+
+    # Rutas del TRABAJADOR
     path('mi-cuenta/eliminar/<int:trabajador_id>/', views.eliminar_cuenta, name='eliminar_cuenta'),
     path("cargar-areas/", views.cargar_areas, name="cargar_areas"),
     path("cargar_cargos/", views.cargar_cargos, name="cargar_cargos"),

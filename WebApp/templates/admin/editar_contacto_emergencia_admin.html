@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Editar Contacto de Emergencia{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Editar Contacto de Emergencia</h2>
+    <form method="POST" class="card p-4 mb-4">
+        {% csrf_token %}
+
+        <!-- Nombre -->
+        <div class="form-group mt-3">
+            <label for="nombre_contacto" class="form-label">
+                <i class="fas fa-user"></i> Nombre del Contacto:
+            </label>
+            <input type="text" id="nombre_contacto" name="nombre_contacto" class="form-control" value="{{ contacto.nombre_contacto }}" required>
+        </div>
+
+        <!-- Apellido -->
+        <div class="form-group mt-3">
+            <label for="apellido_contacto" class="form-label">
+                <i class="fas fa-user"></i> Apellido del Contacto:
+            </label>
+            <input type="text" id="apellido_contacto" name="apellido_contacto" class="form-control" value="{{ contacto.apellido_contacto }}" required>
+        </div>
+
+        <!-- Relación -->
+        <div class="form-group mt-3">
+            <label for="relacion" class="form-label">
+                <i class="fas fa-handshake"></i> Relación:
+            </label>
+            <input type="text" id="relacion" name="relacion" class="form-control" value="{{ contacto.relacion }}" required>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="form-group mt-3">
+            <label for="telefono_contacto" class="form-label">
+                <i class="fas fa-phone"></i> Teléfono del Contacto:
+            </label>
+            <input type="tel" id="telefono_contacto" name="telefono_contacto" class="form-control" value="{{ contacto.telefono_contacto }}" required pattern="[0-9]+">
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+            <a href="{% url 'ver_trabajador' trabajador.id %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
