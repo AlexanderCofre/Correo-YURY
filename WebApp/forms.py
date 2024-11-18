@@ -124,7 +124,6 @@ class TrabajadorDetallesForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         
         # Si se está editando un trabajador con un departamento asignado, filtrar áreas
-        # Si se está editando un trabajador con un departamento asignado, filtrar áreas
         if self.instance.pk:
             if self.instance.departamento:
                 self.fields['area'].queryset = Area.objects.filter(departamento_id=self.instance.departamento.id)

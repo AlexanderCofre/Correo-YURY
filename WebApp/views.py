@@ -8,9 +8,9 @@ from django.core.mail import send_mail
 from .models import Trabajador, Cargo, Area, Departamento, CargaFamiliar, ContactoEmergencia
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from django.conf import settings
-
 from django.http import Http404, JsonResponse
 import json
+import re
 
 
 def inicio(request):
@@ -22,12 +22,39 @@ def registro_trabajador(request):
         trabajador_form = TrabajadorRegistroForm(request.POST)
         
         if trabajador_form.is_valid():
-            trabajador_form.save()
+            trabajador = trabajador_form.save()
             messages.success(request, "Registro exitoso")
+
+            # Enviar correo con el nombre de usuario
+            username = trabajador.username
+            email = trabajador.email
+
+            subject = 'Bienvenido a nuestro sistema'
+            message = f"""
+            Hola {trabajador.first_name} {trabajador.last_name},
+
+            ¡Bienvenido a nuestro sistema!
+
+            Tu nombre de usuario es: {username}
+            Puedes usar este nombre de usuario para ingresar al sistema.
+
+            Si tienes alguna pregunta, no dudes en contactarnos.
+
+            Saludos,
+            El equipo de soporte.
+            """
+
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+                fail_silently=False,
+            )
+
             return redirect('login')
         else:
             messages.error(request, "Por favor, corrija los errores en el formulario.")
-
     else:
         trabajador_form = TrabajadorRegistroForm()
 
@@ -112,12 +139,29 @@ def reiniciar_contraseña(request, token):
         nueva_contraseña = request.POST.get('password')
         confirmar_contraseña = request.POST.get('password_confirm')
 
+        # Depuración de valores
+        print(f"Contraseña ingresada: {nueva_contraseña}")
+        print(f"Confirmar contraseña: {confirmar_contraseña}")
+
+        # Definir el patrón para validar la contraseña
+        contraseña_valida = re.compile(
+            r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_])[A-Za-z\d@$!%*?&_]{8,}$'
+        )
+
         if nueva_contraseña and nueva_contraseña == confirmar_contraseña:
-            # Guardar la nueva contraseña
-            user.password = make_password(nueva_contraseña)
-            user.save()
-            messages.success(request, 'Contraseña actualizada exitosamente.')
-            return redirect('login')
+            if not contraseña_valida.match(nueva_contraseña):
+                print("Contraseña no cumple con los requisitos.")  # Depuración
+                messages.error(
+                    request,
+                    'La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y un símbolo.'
+                )
+            else:
+                print("Contraseña válida.")  # Depuración
+                # Guardar la nueva contraseña
+                user.password = make_password(nueva_contraseña)
+                user.save()
+                messages.success(request, 'Contraseña actualizada exitosamente.')
+                return redirect('login')
         else:
             messages.error(request, 'Las contraseñas no coinciden.')
 
