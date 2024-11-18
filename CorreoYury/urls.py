@@ -25,7 +25,11 @@ urlpatterns = [
     path('login/', views.login_trabajador, name='login'),
     path('logout/', views.logout_trabajador, name='logout'),
 
-    #Rutas del ADMINISTRADOR
+    # Rutas para la recuperacion de contraseña
+    path('recuperar_contraseña/', views.recuperar_contraseña, name='recuperar_contraseña'),
+    path('reiniciar_contraseña/<str:token>/', views.reiniciar_contraseña, name='reiniciar_contraseña'),
+
+    # Rutas del ADMINISTRADOR
     path('trabajadores/', views.listar_trabajadores, name='trabajadores'),
     path('trabajador/<int:trabajador_id>/', views.ver_trabajador, name='ver_trabajador'),
     path('trabajador/<int:trabajador_id>/actualizar/', views.actualizar_datos_trabajador, name='actualizar_datos_trabajador'),

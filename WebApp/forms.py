@@ -343,3 +343,9 @@ class TrabajadorUpdateFormAdmin(forms.ModelForm):
         # Comparar el dígito calculado con el dígito verificador
         return digito_calculado == digito_verificador
     
+
+class RecuperarContraseñaForm(forms.Form):
+    email = forms.EmailField(label="Correo electrónico", max_length=254, required=True, widget=forms.EmailInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Introduce tu correo'
+    }))

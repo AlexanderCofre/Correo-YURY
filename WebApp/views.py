@@ -1,9 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, ContactoEmergenciaForm, CargaFamiliarForm, TrabajadorUpdateFormAdmin
+from .forms import TrabajadorRegistroForm, TrabajadorLoginForm, ContactoEmergenciaForm, CargaFamiliarForm, TrabajadorUpdateFormAdmin, RecuperarContraseñaForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 from django.contrib import messages
+from django.core.mail import send_mail
 from .models import Trabajador, Cargo, Area, Departamento, CargaFamiliar, ContactoEmergencia
+from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
+from django.conf import settings
+
 from django.http import Http404, JsonResponse
 import json
 
@@ -51,6 +56,72 @@ def login_trabajador(request):
 def logout_trabajador(request):
     logout(request)
     return redirect('login')  # Redirigir al formulario de inicio de sesión
+
+
+# Logica para reiniciar la contraseña
+signer = TimestampSigner()
+
+def recuperar_contraseña(request):
+    if request.method == 'POST':
+        form = RecuperarContraseñaForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                user = Trabajador.objects.get(email=email)  # Modelo personalizado
+                # Crear un token seguro
+                token = signer.sign(user.username)
+
+                # URL para reiniciar la contraseña
+                reset_url = request.build_absolute_uri(f"/reiniciar_contraseña/{token}/")
+
+                # Configurar el correo
+                subject = "Recuperación de contraseña"
+                message = f"""
+                Hola, {user.username},
+                
+                Haz solicitado reiniciar tu contraseña. Haz clic en el siguiente enlace para continuar:
+                {reset_url}
+                
+                Si no realizaste esta solicitud, ignora este mensaje.
+                """
+                from_email = settings.DEFAULT_FROM_EMAIL
+                recipient_list = [email]
+
+                # Enviar el correo usando el backend SMTP configurado
+                send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+
+                messages.success(request, 'Se ha enviado un correo con instrucciones para recuperar tu contraseña.')
+                return redirect('recuperar_contraseña')
+            except Trabajador.DoesNotExist:
+                messages.error(request, 'No existe un usuario con este correo.')
+    else:
+        form = RecuperarContraseñaForm()
+    return render(request, 'recuperar_contraseña.html', {'form': form})
+
+
+def reiniciar_contraseña(request, token):
+    try:
+        # Validar el token
+        username = signer.unsign(token, max_age=3600)  # Token válido por 1 hora
+        user = Trabajador.objects.get(username=username)
+    except (BadSignature, SignatureExpired, Trabajador.DoesNotExist):
+        messages.error(request, 'El enlace no es válido o ha expirado.')
+        return redirect('recuperar_contraseña')
+
+    if request.method == 'POST':
+        nueva_contraseña = request.POST.get('password')
+        confirmar_contraseña = request.POST.get('password_confirm')
+
+        if nueva_contraseña and nueva_contraseña == confirmar_contraseña:
+            # Guardar la nueva contraseña
+            user.password = make_password(nueva_contraseña)
+            user.save()
+            messages.success(request, 'Contraseña actualizada exitosamente.')
+            return redirect('login')
+        else:
+            messages.error(request, 'Las contraseñas no coinciden.')
+
+    return render(request, 'reiniciar_contraseña.html', {'token': token})
 
 
 @login_required
