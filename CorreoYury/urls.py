@@ -39,6 +39,7 @@ urlpatterns = [
     path('trabajador/<int:trabajador_id>/carga/<int:carga_id>/editar/', views.editar_carga_familiarAdmin, name='editar_carga_familiar_admin'),
     path('trabajador/<int:trabajador_id>/agregar-contacto-emergencia/', views.agregar_contacto_emergenciaAdmin, name='agregar_contacto_emergencia_admin'),
     path('trabajador/<int:trabajador_id>/contacto/<int:contacto_id>/editar/', views.editar_contacto_emergenciaAdmin, name='editar_contacto_emergencia_admin'),
+    path('eliminar-trabajador/<int:trabajador_id>/', views.eliminar_trabajador, name='eliminar_trabajador'),
 
     # Rutas del TRABAJADOR
     path('mi-cuenta/eliminar/<int:trabajador_id>/', views.eliminar_cuenta, name='eliminar_cuenta'),

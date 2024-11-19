@@ -98,5 +98,35 @@
         </div>        
     </div>
 
+    <div class="mt-4 text-center">
+        <form id="deleteTrabajadorForm" method="post" action="{% url 'eliminar_trabajador' trabajador.id %}">
+            {% csrf_token %}
+            <button type="button" onclick="confirmarEliminacion()" class="btn btn-danger">
+                Eliminar Trabajador
+            </button>
+        </form>
+    </div>
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmarEliminacion() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Enviar el formulario con una solicitud POST
+                document.getElementById('deleteTrabajadorForm').submit();
+            }
+        });
+    }
+</script>
 {% endblock %}

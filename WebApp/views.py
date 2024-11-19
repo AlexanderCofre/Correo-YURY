@@ -433,6 +433,17 @@ def editar_contacto_emergenciaAdmin(request, trabajador_id, contacto_id):
 
 
 @login_required
+def eliminar_trabajador(request, trabajador_id):
+    try:
+        trabajador = Trabajador.objects.get(id=trabajador_id)
+        trabajador.delete()
+        messages.success(request, "El trabajador ha sido eliminado exitosamente.")
+    except Trabajador.DoesNotExist:
+        messages.error(request, "El trabajador no existe.")
+    return redirect('trabajadores')  # Redirigir a la lista de trabajadores
+
+
+@login_required
 def eliminar_cuenta(request, trabajador_id):
     # Asegurarse de que el trabajador que está intentando eliminar su cuenta es el mismo que está logueado
     if request.user.id == trabajador_id:
