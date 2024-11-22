@@ -9,6 +9,9 @@ from .models import Trabajador, Cargo, Area, Departamento, CargaFamiliar, Contac
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from django.conf import settings
 from django.http import Http404, JsonResponse
+from django.urls import reverse
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 import json
 import re
 
@@ -25,30 +28,28 @@ def registro_trabajador(request):
             trabajador = trabajador_form.save()
             messages.success(request, "Registro exitoso")
 
-            # Enviar correo con el nombre de usuario
-            username = trabajador.username
-            email = trabajador.email
+            # Generar URL absoluta para "login"
+            login_url = request.build_absolute_uri(reverse('login'))
 
+            # Datos del correo
             subject = 'Bienvenido a nuestro sistema'
-            message = f"""
-            Hola {trabajador.first_name} {trabajador.last_name},
+            html_message = render_to_string(
+                'correos/bienvenida.html',  # Ruta a la plantilla HTML
+                {
+                    'trabajador': trabajador, 
+                    'login_url': login_url  # Pasar la URL al template
+                }
+            )
+            plain_message = strip_tags(html_message)  # Texto sin formato como respaldo
+            recipient_list = [trabajador.email]
 
-            ¡Bienvenido a nuestro sistema!
-
-            Tu nombre de usuario es: {username}
-            Puedes usar este nombre de usuario para ingresar al sistema.
-
-            Si tienes alguna pregunta, no dudes en contactarnos.
-
-            Saludos,
-            El equipo de soporte.
-            """
-
+            # Enviar el correo
             send_mail(
                 subject,
-                message,
+                plain_message,
                 settings.DEFAULT_FROM_EMAIL,
-                [email],
+                recipient_list,
+                html_message=html_message,  # Enviar versión HTML
                 fail_silently=False,
             )
 
@@ -85,7 +86,7 @@ def logout_trabajador(request):
     return redirect('login')  # Redirigir al formulario de inicio de sesión
 
 
-# Logica para reiniciar la contraseña
+# Lógica para reiniciar la contraseña
 signer = TimestampSigner()
 
 def recuperar_contraseña(request):
@@ -94,30 +95,32 @@ def recuperar_contraseña(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             try:
-                user = Trabajador.objects.get(email=email)  # Modelo personalizado
-                # Crear un token seguro
-                token = signer.sign(user.username)
-
-                # URL para reiniciar la contraseña
+                trabajador = Trabajador.objects.get(email=email)
+                
+                # Generar el token y URL de restablecimiento
+                token = signer.sign(trabajador.username)
                 reset_url = request.build_absolute_uri(f"/reiniciar_contraseña/{token}/")
-
-                # Configurar el correo
-                subject = "Recuperación de contraseña"
-                message = f"""
-                Hola, {user.username},
                 
-                Haz solicitado reiniciar tu contraseña. Haz clic en el siguiente enlace para continuar:
-                {reset_url}
+                # Contexto para el correo
+                context = {
+                    'trabajador': trabajador,
+                    'reset_url': reset_url,
+                }
                 
-                Si no realizaste esta solicitud, ignora este mensaje.
-                """
-                from_email = settings.DEFAULT_FROM_EMAIL
-                recipient_list = [email]
+                # Plantilla del correo
+                message = render_to_string('correos/recuperar_contraseña.html', context)
+                
+                # Enviar el correo
+                send_mail(
+                    "Recuperación de contraseña",
+                    None,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email],
+                    fail_silently=False,
+                    html_message=message  # Asegúrate de usar html_message
+                )
 
-                # Enviar el correo usando el backend SMTP configurado
-                send_mail(subject, message, from_email, recipient_list, fail_silently=False)
-
-                messages.success(request, 'Se ha enviado un correo con instrucciones para recuperar tu contraseña.')
+                messages.success(request, "Se ha enviado un correo con las instrucciones.")
                 return redirect('recuperar_contraseña')
             except Trabajador.DoesNotExist:
                 messages.error(request, 'No existe un usuario con este correo.')

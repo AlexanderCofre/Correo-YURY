@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000000; /* Fondo negro */
+            color: white; /* Texto en blanco */
+        }
+        p {
+            color: white;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #1c1c1c; /* Fondo oscuro para el contenedor */
+            padding: 20px;
+            border: 1px solid #007bff; /* Borde azul */
+            border-radius: 5px;
+        }
+        .header {
+            background: #007bff; /* Fondo azul */
+            color: white; /* Texto blanco */
+            padding: 10px 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            padding: 20px;
+            line-height: 1.6;
+            text-align: center; /* Centrar contenido */
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #888; /* Texto gris claro */
+            margin-top: 20px;
+        }
+        .button {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 10px 15px;
+            background-color: #007bff; /* Fondo azul */
+            color: white !important; /* Forzar texto blanco */
+            text-decoration: none; /* Sin subrayado */
+            border-radius: 5px; /* Bordes redondeados */
+            font-weight: bold; /* Texto en negrita */
+        }
+        .button:hover {
+            background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>Recuperación de Contraseña</h1>
+        </div>
+        <div class="content">
+            <p>Hola, {{ trabajador.first_name }} {{ trabajador.last_name }},</p>
+            <p>Hemos recibido una solicitud para restablecer tu contraseña.</p>
+            <p>Haz clic en el siguiente botón para continuar con el proceso:</p>
+            <a href="{{ reset_url }}" class="button">Restablecer Contraseña</a>
+            <p>Si no realizaste esta solicitud, ignora este mensaje.</p>
+        </div>
+        <div class="footer">
+            <p>© 2024 Correos Yury. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

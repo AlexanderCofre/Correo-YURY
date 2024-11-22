@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000; /* Fondo negro */
+            color: white; /* Texto blanco */
+        }
+        p {
+            color: white;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #1a1a1a; /* Fondo gris oscuro */
+            padding: 20px;
+            border: 1px solid #333; /* Borde gris más oscuro */
+            border-radius: 5px;
+        }
+        .header {
+            background: #007bff; /* Azul */
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #bbb; /* Gris claro */
+            margin-top: 20px;
+        }
+        .button {
+            display: block; /* Cambiar a bloque para centrar */
+            margin: 20px auto; /* Centrar con auto */
+            padding: 10px 15px;
+            background-color: #007bff; /* Fondo azul */
+            color: white !important; /* Forzar texto blanco */
+            text-decoration: none; /* Sin subrayado */
+            border-radius: 5px; /* Bordes redondeados */
+            text-align: center;
+            font-weight: bold; /* Texto en negrita */
+        }
+        .button:hover {
+            background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>Bienvenido a Correos Yury</h1>
+        </div>
+        <div class="content">
+            <p>Hola {{ trabajador.first_name }} {{ trabajador.last_name }},</p>
+            <p>¡Gracias por registrarte en nuestro sistema!</p>
+            <p>Tu nombre de usuario es: <strong>{{ trabajador.username }}</strong></p>
+            <p>Puedes iniciar sesión y comenzar a utilizar nuestros servicios.</p>
+            <a href="{{ login_url }}" class="button">Iniciar Sesión</a>
+            <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+        </div>
+        <div class="footer">
+            <p>© 2024 Correos Yury. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
