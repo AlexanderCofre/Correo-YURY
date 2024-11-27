@@ -86,6 +86,10 @@ def logout_trabajador(request):
     return redirect('login')  # Redirigir al formulario de inicio de sesión
 
 
+def soporte(request):
+    return render(request, 'soporte.html')
+
+
 # Lógica para reiniciar la contraseña
 signer = TimestampSigner()
 
