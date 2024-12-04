@@ -92,19 +92,30 @@ def soporte(request):
         if descripcion:
             usuario = request.user  # Asumimos que el usuario está autenticado
 
+            # Asegurarse de manejar valores nulos o no asignados
+            sexo = dict(Trabajador._meta.get_field('sexo').choices).get(usuario.sexo, "No especificado")
+            fecha_ingreso = usuario.fecha_ingreso.strftime('%d-%m-%Y') if usuario.fecha_ingreso else "No asignado"
+            cargo = usuario.cargo.nombre if usuario.cargo else "No asignado"
+            area = usuario.area.nombre if usuario.area else "No asignado"
+            departamento = usuario.departamento.nombre if usuario.departamento else "No asignado"
+
             # Datos del correo
             subject = f'Problema reportado por {usuario.get_full_name()} ({usuario.RUT})'
             message = f"""
             Se ha recibido un nuevo problema.
 
             Usuario: {usuario.get_full_name()} (RUT: {usuario.RUT})
+            Sexo: {sexo}
+            Fecha de ingreso: {fecha_ingreso}
+            Cargo: {cargo}
+            Área: {area}
+            Departamento: {departamento}
             Email: {usuario.email}
 
             Descripción del problema:
             {descripcion}
             """
-            # recipient_list = ['soporte@correo.com']  # Dirección de soporte
-            recipient_list = ['brioneselias2024@gmail.com']
+            recipient_list = ['brioneselias2024@gmail.com']  # Dirección de soporte
 
             # Enviar el correo
             try:

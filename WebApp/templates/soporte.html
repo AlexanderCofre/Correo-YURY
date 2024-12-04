@@ -58,6 +58,12 @@
 
 <h1 style="text-align: center; color: #333;">Soporte del Correo de Yury</h1>
 <p class="centro">Contáctenos si tiene usted un problema con su envío</p>
+{% for message in messages %}
+<div class="centro alert 
+    {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
+    {{ message }}
+</div>
+{% endfor %}
 <div class="container">
     <div class="card">
         <a href="https://wa.me/56963883716" target="_blank" style="text-decoration: none; color: inherit;">
