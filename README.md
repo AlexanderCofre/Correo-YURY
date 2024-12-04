@@ -1,4 +1,4 @@
-# Correo de Yuri
+# Correo de Yury
 
 Proyecto de Ingeniería de Software
 
