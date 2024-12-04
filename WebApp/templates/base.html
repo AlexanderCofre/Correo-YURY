@@ -34,18 +34,20 @@
                             <a class="nav-link mx-lg-2 active" aria-current="page" href="{% url 'inicio' %}">Inicio</a>
                         </li>
                         {% if user.is_authenticated and user.is_superuser %}
-                            <li class="nav-item">
-                                <a class="nav-link mx-lg-2" href="{% url 'trabajadores' %}">Trabajadores</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link mx-lg-2" href="{% url 'trabajadores' %}">Trabajadores</a>
+                        </li>
                         {% endif %}
                         {% if user.is_authenticated and not user.is_superuser %}
-                            <li class="nav-item">
-                                <a class="nav-link mx-lg-2" href="{% url 'cuenta' %}">Mi Cuenta</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link mx-lg-2" href="{% url 'cuenta' %}">Mi Cuenta</a>
+                        </li>
                         {% endif %}
+                        {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link mx-lg-2" href="{% url 'soporte' %}">Soporte</a>
                         </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>

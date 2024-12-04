@@ -87,6 +87,40 @@ def logout_trabajador(request):
 
 
 def soporte(request):
+    if request.method == 'POST':
+        descripcion = request.POST.get('descripcion', '').strip()  # Capturar el problema ingresado
+        if descripcion:
+            usuario = request.user  # Asumimos que el usuario está autenticado
+
+            # Datos del correo
+            subject = f'Problema reportado por {usuario.get_full_name()} ({usuario.RUT})'
+            message = f"""
+            Se ha recibido un nuevo problema.
+
+            Usuario: {usuario.get_full_name()} (RUT: {usuario.RUT})
+            Email: {usuario.email}
+
+            Descripción del problema:
+            {descripcion}
+            """
+            # recipient_list = ['soporte@correo.com']  # Dirección de soporte
+            recipient_list = ['brioneselias2024@gmail.com']
+
+            # Enviar el correo
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    recipient_list,
+                    fail_silently=False,
+                )
+                messages.success(request, "Tu problema ha sido enviado exitosamente.")
+            except Exception as e:
+                messages.error(request, "Ocurrió un error al enviar tu problema. Inténtalo nuevamente.")
+        else:
+            messages.error(request, "Por favor, describe el problema antes de enviarlo.")
+
     return render(request, 'soporte.html')
 
 

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Soporte{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: rgb(170, 170, 198);
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 20px;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        margin: 10px;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .card img {
+        width: 275px;
+        height: 300px;
+        border-radius: 150%;
+        /* Hace la imagen circular */
+        margin-bottom: 15px;
+    }
+
+    .card h3 {
+        margin: 10px 0;
+        font-size: 1.2em;
+        color: #333;
+    }
+
+    .card p {
+        color: #555;
+        font-size: 1em;
+        margin: 5px 0;
+    }
+
+    .centro {
+        text-align: center;
+    }
+</style>
+
+<h1 style="text-align: center; color: #333;">Soporte del Correo de Yury</h1>
+<p class="centro">Contáctenos si tiene usted un problema con su envío</p>
+<div class="container">
+    <div class="card">
+        <a href="https://wa.me/56963883716" target="_blank" style="text-decoration: none; color: inherit;">
+            <img src="{% static 'img/whatsapp.png' %}" alt="WhatsApp">
+            <h3>WhatsApp</h3>
+            <p>+56 9 9345 5789</p>
+            <p>Contáctenos por WhatsApp</p>
+        </a>
+    </div>
+    <div class="card">
+        <img src="{% static 'img/logo.png' %}" alt="Correo">
+        <h3>Correo Electrónico</h3>
+        <p>soporte@correo.com</p>
+        <p>Escriba un correo para nosotros</p>
+        <form method="post" style="margin-top: 15px;">
+            {% csrf_token %}
+            <textarea name="descripcion" rows="4" placeholder="Escriba los detalles de su problema aquí..."
+                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; resize: none;"></textarea>
+            <button type="submit"
+                style="margin-top: 10px; padding: 10px 20px; border: none; border-radius: 5px; background-color: #007BFF; color: white; font-size: 1em; cursor: pointer;">
+                Enviar Problema
+            </button>
+        </form>
+    </div>
+    <div class="card">
+        <img src="{% static 'img/fijo_rojo.png' %}" alt="Teléfono Fijo">
+        <h3>Teléfono Fijo</h3>
+        <p>+56 2 2345 6789</p>
+        <p>Llámenos desde su teléfono fijo</p>
+    </div>
+</div>
+{% endblock %}
